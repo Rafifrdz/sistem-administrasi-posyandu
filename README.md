@@ -1,58 +1,114 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Sistem Administrasi Posyandu
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+> Proyek Akhir mata kuliah Pemrograman Web — Kelas B
+> Program Studi Teknologi Informasi, Fakultas Ilmu Komputer, Universitas Brawijaya
 
-## About Laravel
+Aplikasi web untuk mengelola data posyandu — peserta, jadwal kegiatan, dan kehadiran — yang menggantikan pencatatan kertas menjadi satu basis data terpusat.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+![Dashboard](docs/dashboard.jpg)
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Latar belakang
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Mayoritas posyandu masih mencatat data di kertas. Kader menghabiskan hingga 40% waktu operasional hanya untuk merekap ulang data bulanan ke Puskesmas, data mudah hilang, dan tren tumbuh kembang anak tidak terpantau sehingga deteksi dini stunting sering terlambat.
 
-## Learning Laravel
+Aplikasi ini memindahkan seluruh proses itu ke dalam sistem terpusat dengan pencatatan yang dirancang mengikuti cara kerja nyata kader di lapangan.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## Fitur
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+| Fitur | Keterangan |
+|---|---|
+| Login & Logout | Autentikasi kader dengan nama pengguna dan kata sandi; halaman administrasi tertutup bagi tamu |
+| Dashboard | Ringkasan peserta per kategori, tren kehadiran enam bulan, kegiatan terdekat, aktivitas terbaru |
+| Data Peserta | Daftar terpaginaasi dengan pencarian nama/NIK dan filter kategori (balita, ibu hamil, lansia) |
+| Kelola Peserta | Tambah, detail, ubah, hapus melalui panel overlay dengan validasi NIK 16 digit unik |
+| Jadwal Kegiatan | Daftar kegiatan dengan filter status/kategori; CRUD termasuk perubahan status |
+| Catat Kehadiran | Pencatatan massal satu kegiatan untuk banyak peserta sekaligus |
+| Riwayat Kehadiran | Filter periode (bulan berjalan, tiga bulan, semua) dan rekap per kegiatan |
+| Laporan Tahunan | Kehadiran per bulan selama 12 bulan dan distribusi peserta per kategori |
+| Log Aktivitas | Jejak audit setiap perubahan data beserta waktu dan pelaku |
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+**Keunggulan utama:** peserta yang tidak dicentang otomatis tercatat *tidak hadir*, sehingga penyebut laporan selalu benar. Seluruh aksi CRUD dilakukan lewat panel overlay tanpa berpindah halaman — pencatatan satu warga selesai di bawah 30 detik.
 
-## Agentic Development
+## Teknologi
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+- **Laravel** — kerangka kerja PHP dengan pola MVC, routing, Eloquent, migrasi, autentikasi sesi, validasi server-side
+- **PHP** — logika aplikasi sisi server
+- **MySQL** — basis data relasional utama
+- **Blade + CSS + JavaScript** — tampilan responsif hingga lebar 720 px, grafik, dan panel overlay
+- **PHPUnit** — 32 uji fungsional otomatis
+
+## Menjalankan secara lokal
 
 ```bash
-composer require laravel/boost --dev
+git clone https://github.com/Rafifrdz/sistem-administrasi-posyandu.git
+cd sistem-administrasi-posyandu
 
-php artisan boost:install
+composer install
+cp .env.example .env
+php artisan key:generate
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+Sesuaikan kredensial basis data pada `.env`:
 
-## Contributing
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=posyandu
+DB_USERNAME=root
+DB_PASSWORD=
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Buat basis data lalu jalankan migrasi beserta data contoh:
 
-## Code of Conduct
+```bash
+mysql -u root -e "CREATE DATABASE posyandu CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+php artisan migrate:fresh --seed
+php artisan serve
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Buka <http://127.0.0.1:8000>.
 
-## Security Vulnerabilities
+## Akun demo
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+| Nama pengguna | Kata sandi | Peran |
+|---|---|---|
+| `siti` | `posyandu123` | Kader Posyandu |
+| `admin` | `admin123` | Administrator |
 
-## License
+## Struktur basis data
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+| Tabel | Isi |
+|---|---|
+| `users` | Akun kader dan administrator |
+| `peserta` | Data peserta posyandu beserta kategori dan data wali |
+| `kegiatan` | Jadwal kegiatan: tanggal, jam, lokasi, kategori, status |
+| `kehadiran` | Satu baris per peserta per kegiatan (hadir / tidak hadir) |
+| `activity_log` | Jejak audit perubahan data |
+
+## Tampilan
+
+| Halaman Masuk | Data Peserta | Riwayat Kehadiran |
+|---|---|---|
+| ![Login](docs/login.jpg) | ![Peserta](docs/peserta.jpg) | ![Kehadiran](docs/kehadiran.jpg) |
+
+## Pengujian
+
+```bash
+php artisan test
+```
+
+32 uji fungsional, 131 asersi — mencakup CRUD peserta, kegiatan, kehadiran, serta autentikasi.
+
+## Dokumentasi
+
+- `KELOMPOK 6_LAPORAN PROJECT AKHIR_PAW.pdf` — laporan akhir sesuai template mata kuliah
+- `PERBANDINGAN - Laporan Lama vs Laporan Baru.pdf` — perbandingan dengan dokumen analisis sebelumnya
+- [Desain antarmuka di Figma](https://www.figma.com/design/A5CKXaB1DekO0Ykk4j5It1/POSYANDU)
+
+## Tim
+
+| Nama | NIM | Kontribusi |
+|---|---|---|
+| Muhammad Rafi Firdaus | 255150701111016 | Basis data, migrasi, model, pengendali, logika kehadiran, pengujian |
+| Fanisah Wulandari | 255150700111027 | Antarmuka Figma, tampilan Blade, panel overlay, dashboard, laporan |
