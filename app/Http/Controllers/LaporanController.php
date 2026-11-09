@@ -16,8 +16,12 @@ class LaporanController extends Controller
         $tahun = (int) request()->query('tahun', now()->year);
 
         /* ── Cakupan ANC per bulan ───────────────── */
+        // Bulan berjalan: untuk tahun ini cukup sampai bulan sekarang,
+        // supaya tidak muncul baris bulan depan yang masih nol.
+        $bulanAkhir = $tahun === (int) now()->year ? (int) now()->month : 12;
+
         $bulanan = [];
-        for ($b = 1; $b <= 12; $b++) {
+        for ($b = 1; $b <= $bulanAkhir; $b++) {
             $dasar = KunjunganAnc::whereYear('tanggal', $tahun)->whereMonth('tanggal', $b);
 
             $bulanan[] = [
@@ -56,6 +60,12 @@ class LaporanController extends Controller
         /* ── Rekap kondisi klinis ────────────────── */
         $kunjunganTahun = KunjunganAnc::whereYear('tanggal', $tahun)->get();
 
+        // Jumlah ibu unik sepanjang tahun — BUKAN penjumlahan angka bulanan,
+        // karena satu ibu bisa berkunjung di beberapa bulan.
+        $ibuUnikTahun = KunjunganAnc::whereYear('tanggal', $tahun)
+            ->distinct('ibu_hamil_id')
+            ->count('ibu_hamil_id');
+
         $rekapKlinis = [
             'total_kunjungan' => $kunjunganTahun->count(),
             'hipertensi'      => $kunjunganTahun->filter(fn ($k) => $k->hipertensi)->count(),
@@ -88,7 +98,7 @@ class LaporanController extends Controller
 
         return view('laporan.index', compact(
             'tahun', 'tahunTersedia', 'bulanan', 'cakupan', 'distribusiRisiko',
-            'risikoTinggi', 'rekapKlinis', 'perTrimester'
+            'risikoTinggi', 'rekapKlinis', 'perTrimester', 'ibuUnikTahun'
         ));
     }
 }

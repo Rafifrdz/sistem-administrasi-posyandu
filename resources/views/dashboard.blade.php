@@ -10,41 +10,41 @@
     @media (max-width: 1100px) { .grid-2 { grid-template-columns: 1fr; } }
 
     .card-h { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; gap: 10px; }
-    .card-h h3 { margin: 0; font-size: 14px; font-weight: 700; color: #1e3528; }
-    .card-h .sub { font-size: 11.5px; color: #90a898; }
+    .card-h h3 { margin: 0; font-size: 14px; font-weight: 700; color: #233c32; }
+    .card-h .sub { font-size: 11.5px; color: #758179; }
 
     .bars { display: flex; align-items: flex-end; gap: 10px; height: 148px; padding-top: 22px; }
     .bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 7px; height: 100%; justify-content: flex-end; }
     .bar-col .b { width: 100%; max-width: 42px; border-radius: 7px 7px 3px 3px; background: linear-gradient(180deg,#6f9d84,#4f7561); min-height: 3px; position: relative; transition: height .4s cubic-bezier(.2,.8,.3,1); }
     .bar-col .b:hover { background: linear-gradient(180deg,#7fb096,#3f6350); }
-    .bar-col .b span { position: absolute; top: -19px; left: 0; right: 0; text-align: center; font-size: 11px; font-weight: 700; color: #4a6b57; }
-    .bar-col .lb { font-size: 11px; color: #90a898; font-weight: 600; }
+    .bar-col .b span { position: absolute; top: -19px; left: 0; right: 0; text-align: center; font-size: 11px; font-weight: 700; color: #758179; }
+    .bar-col .lb { font-size: 11px; color: #758179; font-weight: 600; }
 
     .donut-wrap { display: flex; align-items: center; gap: 20px; }
     .donut { width: 128px; height: 128px; border-radius: 50%; flex-shrink: 0; position: relative; }
     .donut::after { content: ''; position: absolute; inset: 19px; background: #fff; border-radius: 50%; }
     .donut-mid { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 2; }
-    .donut-mid b { font-size: 24px; color: #1e3528; line-height: 1; }
-    .donut-mid span { font-size: 10.5px; color: #90a898; margin-top: 2px; }
+    .donut-mid b { font-size: 24px; color: #233c32; line-height: 1; }
+    .donut-mid span { font-size: 10.5px; color: #758179; margin-top: 2px; }
     .legend { display: flex; flex-direction: column; gap: 9px; }
-    .legend-item { display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: #4a6b57; }
+    .legend-item { display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: #758179; }
     .legend-dot { width: 9px; height: 9px; border-radius: 3px; flex-shrink: 0; }
 
     .row-item { display: flex; align-items: center; gap: 11px; padding: 10px 0; border-bottom: 1px solid #f0f5f1; }
     .row-item:last-child { border-bottom: none; }
     .row-item .txt { flex: 1; min-width: 0; }
-    .row-item .t1 { font-size: 13px; font-weight: 600; color: #1e3528; }
-    .row-item .t2 { font-size: 11.5px; color: #90a898; margin-top: 1px; }
+    .row-item .t1 { font-size: 13px; font-weight: 600; color: #233c32; }
+    .row-item .t2 { font-size: 11.5px; color: #758179; margin-top: 1px; }
 
-    .av { width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg,#4f7561,#3a5c48); color: #fff; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .av { width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg,#4f7561,#4f7561); color: #fff; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
     .risk { padding: 3px 9px; border-radius: 20px; font-size: 10.5px; font-weight: 700; white-space: nowrap; }
-    .risk-krr { background: #e8f3ec; color: #2f6b4a; }
-    .risk-krt { background: #fdf3e0; color: #9a6b12; }
-    .risk-krst { background: #fdeaea; color: #b3261e; }
-    .warn-pill { background: #fdeaea; color: #b3261e; padding: 2px 8px; border-radius: 6px; font-size: 10.5px; font-weight: 700; white-space: nowrap; }
-    .date-box { width: 42px; height: 42px; border-radius: 10px; background: #f0f6f2; display: flex; flex-direction: column; align-items: center; justify-content: center; flex-shrink: 0; }
-    .date-box b { font-size: 15px; color: #2f6b4a; line-height: 1; }
-    .date-box span { font-size: 9.5px; color: #90a898; text-transform: uppercase; }
+    .risk-krr { background: #e8f1eb; color: #4f7561; }
+    .risk-krt { background: #fbf3e3; color: #8a6a2a; }
+    .risk-krst { background: #fdf1f0; color: #b3261e; }
+    .warn-pill { background: #fdf1f0; color: #b3261e; padding: 2px 8px; border-radius: 6px; font-size: 10.5px; font-weight: 700; white-space: nowrap; }
+    .date-box { width: 42px; height: 42px; border-radius: 10px; background: #f0f5f1; display: flex; flex-direction: column; align-items: center; justify-content: center; flex-shrink: 0; }
+    .date-box b { font-size: 15px; color: #4f7561; line-height: 1; }
+    .date-box span { font-size: 9.5px; color: #758179; text-transform: uppercase; }
 </style>
 @endpush
 
@@ -52,7 +52,7 @@
 
 <div class="page-heading" style="margin-bottom:18px;">
     <div>
-        <h2 style="margin:0;font-size:19px;color:#1e3528;">Selamat datang, {{ auth()->user()?->name ?? 'Kader' }} 👋</h2>
+        <h2 style="margin:0;font-size:19px;color:#233c32;">Selamat datang, {{ auth()->user()?->name ?? 'Kader' }} 👋</h2>
         <div class="sub" style="margin-top:4px;">Ringkasan pemantauan ibu hamil Posyandu Melati — {{ now()->translatedFormat('F Y') }}</div>
     </div>
     <a href="{{ route('kunjungan.index') }}" class="btn-primary">
@@ -76,7 +76,7 @@
     <div class="card" style="flex:1;min-width:160px;display:flex;flex-direction:column;gap:12px;">
         <div style="display:flex;align-items:center;justify-content:space-between;">
             <span class="stat-label">Risiko Tinggi</span>
-            <div style="width:32px;height:32px;background:#fdeaea;border-radius:9px;display:flex;align-items:center;justify-content:center;">
+            <div style="width:32px;height:32px;background:#fdf1f0;border-radius:9px;display:flex;align-items:center;justify-content:center;">
                 <img src="/icons/heart-handshake.svg" style="width:17px;height:17px;" alt="">
             </div>
         </div>
@@ -87,11 +87,11 @@
     <div class="card" style="flex:1;min-width:160px;display:flex;flex-direction:column;gap:12px;">
         <div style="display:flex;align-items:center;justify-content:space-between;">
             <span class="stat-label">Kurang Energi (KEK)</span>
-            <div style="width:32px;height:32px;background:#fdf3e0;border-radius:9px;display:flex;align-items:center;justify-content:center;">
+            <div style="width:32px;height:32px;background:#fbf3e3;border-radius:9px;display:flex;align-items:center;justify-content:center;">
                 <img src="/icons/sprout.svg" style="width:17px;height:17px;" alt="">
             </div>
         </div>
-        <div class="stat-num" style="color:#9a6b12;">{{ $statistik['kek'] }}</div>
+        <div class="stat-num" style="color:#8a6a2a;">{{ $statistik['kek'] }}</div>
         <div class="stat-label">LiLA &lt; 23,5 cm</div>
     </div>
 

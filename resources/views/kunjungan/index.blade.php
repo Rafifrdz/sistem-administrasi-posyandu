@@ -6,16 +6,13 @@
 
 @push('head')
 <style>
-    .chip { padding: 7px 13px; border-radius: 20px; border: 1.5px solid #dde5de; background: #fff; font-size: 12.5px; color: #4a6b57; text-decoration: none; font-weight: 600; transition: all .15s; }
-    .chip:hover { border-color: #b9d2c1; background: #f6faf7; }
-    .chip.on { background: #2f7d78; border-color: #2f7d78; color: #fff; }
-    .vital { font-family: ui-monospace, monospace; font-size: 12.5px; font-weight: 600; color: #1e3528; }
+    .vital { font-family: ui-monospace, monospace; font-size: 12.5px; font-weight: 600; color: #233c32; }
     .flag { display: inline-block; padding: 2px 7px; border-radius: 5px; font-size: 10px; font-weight: 700; margin: 1px 2px 1px 0; }
-    .flag-red { background: #fdeaea; color: #b3261e; }
-    .flag-amber { background: #fdf3e0; color: #9a6b12; }
-    .flag-green { background: #e8f3ec; color: #2f6b4a; }
-    .tm-badge { padding: 2px 7px; border-radius: 5px; font-size: 10px; font-weight: 700; background: #f0f5f1; color: #4a6b57; }
-    .live-warn { display: none; gap: 6px; flex-wrap: wrap; padding: 9px 11px; background: #fdf3e0; border: 1px solid #f0dfbe; border-radius: 8px; font-size: 12px; color: #8a5d10; }
+    .flag-red { background: #fdf1f0; color: #b3261e; }
+    .flag-amber { background: #fbf3e3; color: #8a6a2a; }
+    .flag-green { background: #e8f1eb; color: #4f7561; }
+    .tm-badge { padding: 2px 7px; border-radius: 5px; font-size: 10px; font-weight: 700; background: #f0f5f1; color: #758179; }
+    .live-warn { display: none; gap: 6px; flex-wrap: wrap; padding: 9px 11px; background: #fbf3e3; border: 1px solid #f0dfbe; border-radius: 8px; font-size: 12px; color: #8a5d10; }
     .live-warn.show { display: flex; }
 </style>
 @endpush
@@ -45,7 +42,7 @@
     </div>
     <div class="card" style="flex:1;min-width:150px;">
         <span class="stat-label">Anemia</span>
-        <div class="stat-num" style="color:#9a6b12;">{{ $statistik['anemia'] }}</div>
+        <div class="stat-num" style="color:#8a6a2a;">{{ $statistik['anemia'] }}</div>
         <span class="stat-label">Hb &lt; 11 g/dL</span>
     </div>
     <div class="card" style="flex:1;min-width:150px;">
@@ -56,15 +53,15 @@
 </div>
 
 {{-- ── Filter ──────────────────────────────────── --}}
-<div class="card" style="margin-bottom:16px;">
-    <form method="GET" action="{{ route('kunjungan.index') }}" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:0;">
-        <div class="filter-row">
+<div class="filter-card">
+    <form method="GET" action="{{ route('kunjungan.index') }}" style="display:flex;gap:16px;flex-wrap:wrap;align-items:center;margin:0;width:100%;">
+        <div class="chip-row">
             @foreach (['bulan' => 'Bulan ini', '3bulan' => '3 Bulan', 'semua' => 'Semua'] as $key => $label)
                 <a href="{{ route('kunjungan.index', ['periode' => $key, 'ibu' => $ibuId]) }}"
                    class="chip {{ $periode === $key ? 'on' : '' }}">{{ $label }}</a>
             @endforeach
         </div>
-        <select name="ibu" class="form-control" style="width:auto;height:38px;font-size:13px;margin-left:auto;" onchange="this.form.submit()">
+        <select name="ibu" class="filter-select" style="margin-left:auto;" onchange="this.form.submit()">
             <option value="">Semua ibu hamil</option>
             @foreach ($ibuList as $ib)
                 <option value="{{ $ib->id }}" @selected((int) $ibuId === $ib->id)>{{ $ib->nama }}</option>
@@ -107,7 +104,7 @@
                     </td>
                     <td data-l="Antropometri">
                         <div class="vital">BB {{ $k->berat_badan ?? '—' }} kg</div>
-                        <div class="sub">LiLA {{ $k->lila ?? '—' }} cm @if($k->kek) · <span style="color:#9a6b12;font-weight:700;">KEK</span> @endif</div>
+                        <div class="sub">LiLA {{ $k->lila ?? '—' }} cm @if($k->kek) · <span style="color:#8a6a2a;font-weight:700;">KEK</span> @endif</div>
                     </td>
                     <td data-l="Tanda Vital">
                         <div class="vital">{{ $k->tensi_label }}</div>
@@ -146,7 +143,7 @@
                     <td colspan="7">
                         <div class="empty-state">
                             <div class="empty-icon"><img src="/icons/clipboard-check.svg" alt="" style="width:22px;height:22px;opacity:.4;"></div>
-                            <div style="font-weight:600;color:#4a6b57;">Belum ada catatan kunjungan</div>
+                            <div style="font-weight:600;color:#758179;">Belum ada catatan kunjungan</div>
                             <div class="sub" style="margin-top:4px;">Catat hasil pemeriksaan ANC pertama pada periode ini.</div>
                         </div>
                     </td>
@@ -246,7 +243,7 @@
                             <label>Tanda Bahaya</label>
                             <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;">
                                 @foreach (\App\Models\KunjunganAnc::TANDA_BAHAYA as $kode => $label)
-                                    <label style="display:flex;align-items:center;gap:7px;font-weight:500;font-size:12.5px;color:#4a6b57;">
+                                    <label style="display:flex;align-items:center;gap:7px;font-weight:500;font-size:12.5px;color:#758179;">
                                         <input type="checkbox" name="tanda_bahaya[]" value="{{ $kode }}" style="width:15px;height:15px;"> {{ $label }}
                                     </label>
                                 @endforeach
@@ -367,7 +364,7 @@
                 <div class="del-icon">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/></svg>
                 </div>
-                <div style="font-size:16px;font-weight:700;color:#1e3528;">Hapus catatan kunjungan?</div>
+                <div style="font-size:16px;font-weight:700;color:#233c32;">Hapus catatan kunjungan?</div>
                 <div class="sub" id="hpInfo" style="margin-top:6px;"></div>
             </div>
             <div class="md-foot">

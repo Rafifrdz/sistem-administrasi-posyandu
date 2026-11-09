@@ -7,24 +7,45 @@
 @push('head')
 <style>
     .risk { padding: 3px 9px; border-radius: 20px; font-size: 10.5px; font-weight: 700; letter-spacing: .02em; display: inline-block; white-space: nowrap; }
-    .risk-krr  { background: #e8f3ec; color: #2f6b4a; }
-    .risk-krt  { background: #fdf3e0; color: #9a6b12; }
-    .risk-krst { background: #fdeaea; color: #b3261e; }
-    .tm { padding: 2px 8px; border-radius: 6px; font-size: 10.5px; font-weight: 700; background: #f0f5f1; color: #4a6b57; }
-    .wk { font-weight: 700; color: #1e3528; font-size: 13.5px; }
-    .wk small { font-weight: 500; color: #90a898; font-size: 11px; }
+    .risk-krr  { background: #e8f1eb; color: #4f7561; }
+    .risk-krt  { background: #fbf3e3; color: #8a6a2a; }
+    .risk-krst { background: #fdf1f0; color: #b3261e; }
+    .tm { padding: 2px 8px; border-radius: 6px; font-size: 10.5px; font-weight: 700; background: #f0f5f1; color: #758179; }
+    .wk { font-weight: 700; color: #233c32; font-size: 13.5px; }
+    .wk small { font-weight: 500; color: #758179; font-size: 11px; }
     .bar { height: 5px; border-radius: 3px; background: #eef3ef; overflow: hidden; margin-top: 5px; }
     .bar > i { display: block; height: 100%; border-radius: 3px; background: #4f7561; }
     .filter-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
-    .chip { padding: 7px 13px; border-radius: 20px; border: 1.5px solid #dde5de; background: #fff; font-size: 12.5px; color: #4a6b57; text-decoration: none; font-weight: 600; transition: all .15s; }
-    .chip:hover { border-color: #b9d2c1; background: #f6faf7; }
-    .chip.on { background: #2f7d78; border-color: #2f7d78; color: #fff; }
-    .stat-mini { display: flex; gap: 12px; flex-wrap: wrap; }
-    .stat-mini .card { flex: 1; min-width: 150px; display: flex; flex-direction: column; gap: 10px; }
+    .stat-mini { display: flex; gap: 16px; flex-wrap: wrap; }
+    .stat-mini .card { flex: 1; min-width: 160px; display: flex; flex-direction: column; gap: 9px; padding: 16px; }
+    /* Kartu pencarian & filter — label di atas tiap kontrol */
+    .filter-card {
+        display: flex; gap: 16px; align-items: flex-end; flex-wrap: wrap;
+        padding: 20px; border-radius: 14px; background: #fff;
+        border: 1px solid #e4eae5; margin-bottom: 16px;
+    }
+    .filter-field { display: flex; flex-direction: column; gap: 8px; }
+    .filter-field > label { font-size: 13px; font-weight: 500; color: #233c32; }
+    .filter-field.w-cari { flex: 1 1 320px; max-width: 412px; }
+    .filter-field.w-pilih { flex: 0 0 220px; }
+    /* tinggi kontrol filter disamakan dengan halaman lain (40px) */
+    .filter-card .form-control { height: 40px; }
+    .filter-card .btn-primary { height: 40px; }
 </style>
 @endpush
 
 @section('content')
+
+{{-- ── Judul halaman ───────────────────────────── --}}
+<div class="page-heading" style="margin-bottom:24px;">
+    <div class="title-group">
+        <h1>Data Ibu Hamil</h1>
+        <p>Kelola data kehamilan dan pantau kondisi ibu hamil.</p>
+    </div>
+    <button class="btn-primary" onclick="bukaTambah()">
+        <img src="/icons/plus.svg" alt="" style="width:16px;height:16px;"> Tambah Ibu Hamil
+    </button>
+</div>
 
 {{-- ── Kartu ringkasan ─────────────────────────── --}}
 <div class="stat-mini" style="margin-bottom:18px;">
@@ -55,39 +76,44 @@
     </div>
     <div class="card">
         <span class="stat-label">Kurang Energi (KEK)</span>
-        <div class="stat-num" style="color:#9a6b12;">{{ $statistik['kek'] }}</div>
+        <div class="stat-num" style="color:#8a6a2a;">{{ $statistik['kek'] }}</div>
         <span class="stat-label">LiLA &lt; 23,5 cm</span>
     </div>
 </div>
 
-{{-- ── Toolbar ─────────────────────────────────── --}}
-<div class="card" style="margin-bottom:16px;">
-    <div style="display:flex;gap:14px;flex-wrap:wrap;align-items:center;justify-content:space-between;">
-        <form method="GET" action="{{ route('ibu-hamil.index') }}" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:0;">
-            <div class="search-bar" style="min-width:220px;">
-                <img src="/icons/search.svg" alt="" style="width:15px;height:15px;opacity:.5;">
-                <input type="text" name="q" value="{{ $kata }}" placeholder="Cari nama, NIK, atau suami…">
-            </div>
-            <select name="filter" class="form-control" style="width:auto;height:38px;font-size:13px;" onchange="this.form.submit()">
-                <option value="">Semua trimester</option>
-                <option value="tm1" @selected($filter === 'tm1')>Trimester 1</option>
-                <option value="tm2" @selected($filter === 'tm2')>Trimester 2</option>
-                <option value="tm3" @selected($filter === 'tm3')>Trimester 3</option>
-            </select>
-            <select name="risiko" class="form-control" style="width:auto;height:38px;font-size:13px;" onchange="this.form.submit()">
-                <option value="">Semua risiko</option>
-                <option value="KRR"  @selected($risiko === 'KRR')>Risiko Rendah</option>
-                <option value="KRT"  @selected($risiko === 'KRT')>Risiko Tinggi</option>
-                <option value="KRST" @selected($risiko === 'KRST')>Risiko Sangat Tinggi</option>
-            </select>
-            <button type="submit" class="btn-secondary btn-sm">Terapkan</button>
-        </form>
-
-        <button class="btn-primary" onclick="bukaTambah()">
-            <img src="/icons/plus.svg" alt="" style="width:15px;height:15px;"> Tambah Ibu Hamil
-        </button>
+{{-- ── Pencarian dan filter ────────────────────── --}}
+<form method="GET" action="{{ route('ibu-hamil.index') }}" class="filter-card">
+    <div class="filter-field w-cari">
+        <label for="q">Cari ibu hamil</label>
+        <div class="search-bar">
+            <img class="search-icon" src="/icons/search.svg" alt="">
+            <input type="text" id="q" name="q" class="form-control"
+                   value="{{ $kata }}" placeholder="Cari nama, NIK, atau suami">
+        </div>
     </div>
-</div>
+
+    <div class="filter-field w-pilih">
+        <label for="filter">Trimester</label>
+        <select id="filter" name="filter" class="form-control" onchange="this.form.submit()">
+            <option value="">Semua trimester</option>
+            <option value="tm1" @selected($filter === 'tm1')>Trimester 1</option>
+            <option value="tm2" @selected($filter === 'tm2')>Trimester 2</option>
+            <option value="tm3" @selected($filter === 'tm3')>Trimester 3</option>
+        </select>
+    </div>
+
+    <div class="filter-field w-pilih">
+        <label for="risiko">Kategori risiko</label>
+        <select id="risiko" name="risiko" class="form-control" onchange="this.form.submit()">
+            <option value="">Semua risiko</option>
+            <option value="KRR"  @selected($risiko === 'KRR')>Risiko Rendah</option>
+            <option value="KRT"  @selected($risiko === 'KRT')>Risiko Tinggi</option>
+            <option value="KRST" @selected($risiko === 'KRST')>Risiko Sangat Tinggi</option>
+        </select>
+    </div>
+
+    <button type="submit" class="btn-primary">Terapkan</button>
+</form>
 
 {{-- ── Tabel ───────────────────────────────────── --}}
 <div class="card" style="padding:0;overflow:hidden;">
@@ -157,7 +183,7 @@
                     <td colspan="6">
                         <div class="empty-state">
                             <div class="empty-icon"><img src="/icons/users-round.svg" alt="" style="width:22px;height:22px;opacity:.4;"></div>
-                            <div style="font-weight:600;color:#4a6b57;">Belum ada data ibu hamil</div>
+                            <div style="font-weight:600;color:#758179;">Belum ada data ibu hamil</div>
                             <div class="sub" style="margin-top:4px;">Tambahkan data sasaran untuk mulai memantau kehamilan.</div>
                         </div>
                     </td>
@@ -347,7 +373,7 @@
                 <div class="del-icon">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/></svg>
                 </div>
-                <div style="font-size:16px;font-weight:700;color:#1e3528;">Hapus data ibu hamil?</div>
+                <div style="font-size:16px;font-weight:700;color:#233c32;">Hapus data ibu hamil?</div>
                 <div class="sub" id="hpNama" style="margin-top:6px;"></div>
                 <div class="sub" style="margin-top:10px;color:#b3261e;">Seluruh riwayat kunjungan ANC miliknya ikut terhapus dan tidak dapat dikembalikan.</div>
             </div>

@@ -9,18 +9,28 @@
     .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
     @media (max-width: 1000px) { .grid-2 { grid-template-columns: 1fr; } }
     .card-h { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; gap: 10px; }
-    .card-h h3 { margin: 0; font-size: 14px; font-weight: 700; color: #1e3528; }
+    .card-h h3 { margin: 0; font-size: 14px; font-weight: 700; color: #233c32; }
     .cov-row { display: flex; align-items: center; gap: 12px; margin-bottom: 11px; }
-    .cov-lbl { width: 34px; font-size: 12px; font-weight: 700; color: #4a6b57; flex-shrink: 0; }
+    .cov-lbl { width: 34px; font-size: 12px; font-weight: 700; color: #758179; flex-shrink: 0; }
     .cov-bar { flex: 1; height: 9px; background: #eef3ef; border-radius: 5px; overflow: hidden; }
     .cov-bar > i { display: block; height: 100%; border-radius: 5px; background: linear-gradient(90deg,#6f9d84,#4f7561); }
-    .cov-val { width: 66px; text-align: right; font-size: 12px; color: #4a6b57; font-weight: 600; }
+    .cov-val { width: 66px; text-align: right; font-size: 12px; color: #758179; font-weight: 600; }
     .risk-box { border-radius: 12px; padding: 15px; text-align: center; }
     .risk-box b { display: block; font-size: 26px; line-height: 1.1; margin-bottom: 3px; }
     .risk-box span { font-size: 11.5px; font-weight: 600; }
-    .rk-krr { background: #e8f3ec; color: #2f6b4a; }
-    .rk-krt { background: #fdf3e0; color: #9a6b12; }
-    .rk-krst { background: #fdeaea; color: #b3261e; }
+    .rk-krr { background: #e8f1eb; color: #4f7561; }
+    .rk-krt { background: #fbf3e3; color: #8a6a2a; }
+    .rk-krst { background: #fdf1f0; color: #b3261e; }
+    .data-table .num { text-align: right; font-variant-numeric: tabular-nums; }
+    .data-table tr.row-empty td { color: #b0bdb5; }
+    .data-table tfoot td {
+        padding: 13px 16px;
+        background: #f8faf8; font-weight: 700; color: #233c32;
+        border-top: 2px solid #e4eae5; border-bottom: 0;
+    }
+    /* Lebar kolom dikunci supaya angka selalu lurus, tidak bergeser ikut panjang header */
+    .data-table.rekap { table-layout: fixed; }
+    .data-table.rekap th, .data-table.rekap td { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     @media print {
         .sidebar, .topbar, .page-footer, .no-print { display: none !important; }
         .page-content { padding: 0 !important; }
@@ -31,20 +41,20 @@
 
 @section('content')
 
-<div class="page-heading no-print" style="margin-bottom:18px;">
-    <div>
-        <h2 style="margin:0;font-size:19px;color:#35271e;">Laporan Pelayanan Ibu Hamil</h2>
-        <div class="sub" style="margin-top:4px;">Cakupan ANC, deteksi risiko, dan kondisi klinis tahun {{ $tahun }}</div>
+<div class="page-heading no-print" style="margin-bottom:24px;">
+    <div class="title-group">
+        <h1>Laporan Pelayanan Ibu Hamil</h1>
+        <p>Cakupan ANC, deteksi risiko, dan kondisi klinis tahun {{ $tahun }}</p>
     </div>
     <div style="display:flex;gap:8px;align-items:center;">
         <form method="GET" action="{{ route('laporan.index') }}" style="margin:0;">
-            <select name="tahun" class="form-control" style="width:auto;height:38px;font-size:13px;" onchange="this.form.submit()">
+            <select name="tahun" class="filter-select" onchange="this.form.submit()">
                 @foreach ($tahunTersedia as $th)
                     <option value="{{ $th }}" @selected((int) $th === (int) $tahun)>{{ $th }}</option>
                 @endforeach
             </select>
         </form>
-        <button class="btn-secondary" onclick="window.print()">
+        <button class="btn-secondary" style="height:40px;" onclick="window.print()">
             <img src="/icons/printer.svg" alt="" style="width:15px;height:15px;"> Cetak
         </button>
     </div>
@@ -54,7 +64,7 @@
 <div style="display:flex;gap:14px;flex-wrap:wrap;margin-bottom:16px;">
     <div class="card" style="flex:1;min-width:150px;"><span class="stat-label">Total Kunjungan</span><div class="stat-num">{{ $rekapKlinis['total_kunjungan'] }}</div><span class="stat-label">tahun {{ $tahun }}</span></div>
     <div class="card" style="flex:1;min-width:150px;"><span class="stat-label">Hipertensi</span><div class="stat-num" style="color:#b3261e;">{{ $rekapKlinis['hipertensi'] }}</div><span class="stat-label">≥ 140/90 mmHg</span></div>
-    <div class="card" style="flex:1;min-width:150px;"><span class="stat-label">Anemia</span><div class="stat-num" style="color:#9a6b12;">{{ $rekapKlinis['anemia'] }}</div><span class="stat-label">Hb &lt; 11 g/dL</span></div>
+    <div class="card" style="flex:1;min-width:150px;"><span class="stat-label">Anemia</span><div class="stat-num" style="color:#8a6a2a;">{{ $rekapKlinis['anemia'] }}</div><span class="stat-label">Hb &lt; 11 g/dL</span></div>
     <div class="card" style="flex:1;min-width:150px;"><span class="stat-label">KEK</span><div class="stat-num">{{ $rekapKlinis['kek'] }}</div><span class="stat-label">LiLA &lt; 23,5 cm</span></div>
     <div class="card" style="flex:1;min-width:150px;"><span class="stat-label">Dirujuk</span><div class="stat-num">{{ $rekapKlinis['dirujuk'] }}</div><span class="stat-label">Puskesmas / RS</span></div>
 </div>
@@ -103,42 +113,51 @@
 
 {{-- ── Rekap bulanan ───────────────────────────── --}}
 <div class="card" style="padding:0;overflow:hidden;margin-bottom:16px;">
-    <div style="padding:18px 20px 0;"><h3 style="margin:0;font-size:14px;font-weight:700;color:#1e3528;">Rekapitulasi Bulanan {{ $tahun }}</h3></div>
+    <div style="padding:18px 20px 0;"><h3 style="margin:0;font-size:14px;font-weight:700;color:#233c32;">Rekapitulasi Bulanan {{ $tahun }}</h3></div>
     <div class="table-wrap" style="margin-top:12px;">
-        <table class="data-table">
+        <table class="data-table rekap">
+            <colgroup>
+                <col style="width: 14%">
+                <col style="width: 15%">
+                <col style="width: 14%">
+                <col style="width: 13%">
+                <col style="width: 16%">
+                <col style="width: 14%">
+                <col style="width: 14%">
+            </colgroup>
             <thead>
                 <tr>
                     <th>Bulan</th>
-                    <th>Kunjungan</th>
-                    <th>Ibu Unik</th>
-                    <th>K1 Baru</th>
-                    <th>Hipertensi</th>
-                    <th>Anemia</th>
-                    <th>Dirujuk</th>
+                    <th class="num">Kunjungan</th>
+                    <th class="num">Ibu Unik</th>
+                    <th class="num">K1 Baru</th>
+                    <th class="num">Hipertensi</th>
+                    <th class="num">Anemia</th>
+                    <th class="num">Dirujuk</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach ($bulanan as $b)
-                    <tr>
+                    <tr @class(['row-empty' => $b['kunjungan'] === 0])>
                         <td data-l="Bulan"><span class="nm" style="font-size:13px;">{{ $b['bulan'] }}</span></td>
-                        <td data-l="Kunjungan">{{ $b['kunjungan'] }}</td>
-                        <td data-l="Ibu Unik">{{ $b['ibu'] }}</td>
-                        <td data-l="K1 Baru">{{ $b['k1'] }}</td>
-                        <td data-l="Hipertensi">{{ $b['hipertensi'] }}</td>
-                        <td data-l="Anemia">{{ $b['anemia'] }}</td>
-                        <td data-l="Dirujuk">{{ $b['dirujuk'] }}</td>
+                        <td class="num" data-l="Kunjungan">{{ $b['kunjungan'] }}</td>
+                        <td class="num" data-l="Ibu Unik">{{ $b['ibu'] }}</td>
+                        <td class="num" data-l="K1 Baru">{{ $b['k1'] }}</td>
+                        <td class="num" data-l="Hipertensi">{{ $b['hipertensi'] }}</td>
+                        <td class="num" data-l="Anemia">{{ $b['anemia'] }}</td>
+                        <td class="num" data-l="Dirujuk">{{ $b['dirujuk'] }}</td>
                     </tr>
                 @endforeach
             </tbody>
             <tfoot>
-                <tr style="background:#f8faf8;font-weight:700;">
+                <tr>
                     <td data-l="Bulan">Total</td>
-                    <td data-l="Kunjungan">{{ collect($bulanan)->sum('kunjungan') }}</td>
-                    <td data-l="Ibu Unik">{{ collect($bulanan)->sum('ibu') }}</td>
-                    <td data-l="K1 Baru">{{ collect($bulanan)->sum('k1') }}</td>
-                    <td data-l="Hipertensi">{{ collect($bulanan)->sum('hipertensi') }}</td>
-                    <td data-l="Anemia">{{ collect($bulanan)->sum('anemia') }}</td>
-                    <td data-l="Dirujuk">{{ collect($bulanan)->sum('dirujuk') }}</td>
+                    <td class="num" data-l="Kunjungan">{{ collect($bulanan)->sum('kunjungan') }}</td>
+                    <td class="num" data-l="Ibu Unik">{{ $ibuUnikTahun }}</td>
+                    <td class="num" data-l="K1 Baru">{{ collect($bulanan)->sum('k1') }}</td>
+                    <td class="num" data-l="Hipertensi">{{ collect($bulanan)->sum('hipertensi') }}</td>
+                    <td class="num" data-l="Anemia">{{ collect($bulanan)->sum('anemia') }}</td>
+                    <td class="num" data-l="Dirujuk">{{ collect($bulanan)->sum('dirujuk') }}</td>
                 </tr>
             </tfoot>
         </table>
@@ -148,7 +167,7 @@
 {{-- ── Daftar risiko tinggi ────────────────────── --}}
 <div class="card" style="padding:0;overflow:hidden;">
     <div style="padding:18px 20px 0;">
-        <h3 style="margin:0;font-size:14px;font-weight:700;color:#1e3528;">Daftar Ibu Hamil Risiko Tinggi</h3>
+        <h3 style="margin:0;font-size:14px;font-weight:700;color:#233c32;">Daftar Ibu Hamil Risiko Tinggi</h3>
         <div class="sub" style="margin-top:2px;">Berdasarkan Kartu Skor Poedji Rochjati (KSPR)</div>
     </div>
     <div class="table-wrap" style="margin-top:12px;">
@@ -166,7 +185,7 @@
                     <td data-l="Usia Kandungan">{{ $i->usia_kehamilan }} minggu <span class="sub">(TM{{ $i->trimester }})</span></td>
                     <td data-l="Skor"><b>{{ $i->skor_kspr }}</b></td>
                     <td data-l="Kategori">
-                        <span style="padding:3px 9px;border-radius:20px;font-size:10.5px;font-weight:700;background:{{ $i->kategori_risiko === 'KRST' ? '#fdeaea' : '#fdf3e0' }};color:{{ $i->kategori_risiko === 'KRST' ? '#b3261e' : '#9a6b12' }};">
+                        <span style="padding:3px 9px;border-radius:20px;font-size:10.5px;font-weight:700;background:{{ $i->kategori_risiko === 'KRST' ? '#fdf1f0' : '#fbf3e3' }};color:{{ $i->kategori_risiko === 'KRST' ? '#b3261e' : '#8a6a2a' }};">
                             {{ $i->kategori_risiko }}
                         </span>
                     </td>

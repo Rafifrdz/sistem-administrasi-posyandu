@@ -10,21 +10,21 @@
     .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
     @media (max-width: 1000px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } }
     .card-h { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; gap: 10px; }
-    .card-h h3 { margin: 0; font-size: 14px; font-weight: 700; color: #1e3528; }
+    .card-h h3 { margin: 0; font-size: 14px; font-weight: 700; color: #233c32; }
     .risk { padding: 4px 12px; border-radius: 20px; font-size: 11.5px; font-weight: 700; }
-    .risk-krr { background: #e8f3ec; color: #2f6b4a; }
-    .risk-krt { background: #fdf3e0; color: #9a6b12; }
-    .risk-krst { background: #fdeaea; color: #b3261e; }
+    .risk-krr { background: #e8f1eb; color: #4f7561; }
+    .risk-krt { background: #fbf3e3; color: #8a6a2a; }
+    .risk-krst { background: #fdf1f0; color: #b3261e; }
     .kv { display: grid; grid-template-columns: 1fr 1fr; gap: 13px 18px; }
     .kv .it { display: flex; flex-direction: column; gap: 2px; }
-    .kv .lb { font-size: 10.5px; font-weight: 600; color: #90a898; text-transform: uppercase; letter-spacing: .04em; }
-    .kv .vl { font-size: 13.5px; color: #1e3528; font-weight: 500; }
-    .anc-box { border: 1.5px solid #e3eae4; border-radius: 12px; padding: 13px; text-align: center; }
+    .kv .lb { font-size: 10.5px; font-weight: 600; color: #758179; text-transform: uppercase; letter-spacing: .04em; }
+    .kv .vl { font-size: 13.5px; color: #233c32; font-weight: 500; }
+    .anc-box { border: 1.5px solid #e4eae5; border-radius: 12px; padding: 13px; text-align: center; }
     .anc-box.ok { border-color: #b9d2c1; background: #f6faf7; }
     .anc-box.no { border-color: #f0dfbe; background: #fdfaf3; }
-    .anc-box b { display: block; font-size: 17px; color: #1e3528; }
-    .anc-box span { font-size: 10.5px; color: #90a898; }
-    .faktor { display: inline-block; padding: 3px 9px; border-radius: 6px; font-size: 11px; font-weight: 600; background: #fdeaea; color: #b3261e; margin: 0 4px 4px 0; }
+    .anc-box b { display: block; font-size: 17px; color: #233c32; }
+    .anc-box span { font-size: 10.5px; color: #758179; }
+    .faktor { display: inline-block; padding: 3px 9px; border-radius: 6px; font-size: 11px; font-weight: 600; background: #fdf1f0; color: #b3261e; margin: 0 4px 4px 0; }
 </style>
 @endpush
 
@@ -36,7 +36,7 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:15px;height:15px;"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
         </a>
         <div>
-            <h2 style="margin:0;font-size:19px;color:#1e3528;">{{ $ibu->nama }}</h2>
+            <h2 style="margin:0;font-size:19px;color:#233c32;">{{ $ibu->nama }}</h2>
             <div class="sub" style="margin-top:3px;">{{ $ibu->nik }} · {{ $ibu->umur }} tahun · {{ $ibu->gpa }}</div>
         </div>
         <span class="risk risk-{{ strtolower($ibu->kategori_risiko) }}">{{ $ibu->kategori_risiko }} — {{ $ibu->kategori_risiko_label }}</span>
@@ -139,15 +139,15 @@
             $titik = $grafik->map(fn ($g) => round($px($g['minggu']), 1) . ',' . round($py($g['bb']), 1))->implode(' ');
         @endphp
         <svg viewBox="0 0 {{ $w }} {{ $h }}" style="width:100%;height:auto;">
-            <line x1="{{ $pad }}" y1="{{ $h - $pad }}" x2="{{ $w - $pad }}" y2="{{ $h - $pad }}" stroke="#e3eae4" stroke-width="1"/>
-            <line x1="{{ $pad }}" y1="{{ $pad }}" x2="{{ $pad }}" y2="{{ $h - $pad }}" stroke="#e3eae4" stroke-width="1"/>
+            <line x1="{{ $pad }}" y1="{{ $h - $pad }}" x2="{{ $w - $pad }}" y2="{{ $h - $pad }}" stroke="#e4eae5" stroke-width="1"/>
+            <line x1="{{ $pad }}" y1="{{ $pad }}" x2="{{ $pad }}" y2="{{ $h - $pad }}" stroke="#e4eae5" stroke-width="1"/>
             <polyline points="{{ $titik }}" fill="none" stroke="#4f7561" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
             @foreach ($grafik as $g)
                 <circle cx="{{ round($px($g['minggu']), 1) }}" cy="{{ round($py($g['bb']), 1) }}" r="4" fill="#fff" stroke="#4f7561" stroke-width="2.5"/>
-                <text x="{{ round($px($g['minggu']), 1) }}" y="{{ round($py($g['bb']), 1) - 11 }}" text-anchor="middle" font-size="10" fill="#4a6b57" font-weight="700">{{ $g['bb'] }}</text>
+                <text x="{{ round($px($g['minggu']), 1) }}" y="{{ round($py($g['bb']), 1) - 11 }}" text-anchor="middle" font-size="10" fill="#758179" font-weight="700">{{ $g['bb'] }}</text>
             @endforeach
-            <text x="{{ $pad }}" y="{{ $h - 10 }}" font-size="10" fill="#90a898">minggu ke-{{ $minX }}</text>
-            <text x="{{ $w - $pad }}" y="{{ $h - 10 }}" font-size="10" fill="#90a898" text-anchor="end">minggu ke-{{ $maxX }}</text>
+            <text x="{{ $pad }}" y="{{ $h - 10 }}" font-size="10" fill="#758179">minggu ke-{{ $minX }}</text>
+            <text x="{{ $w - $pad }}" y="{{ $h - 10 }}" font-size="10" fill="#758179" text-anchor="end">minggu ke-{{ $maxX }}</text>
         </svg>
     @else
         <div class="sub" style="padding:16px 0;">Grafik muncul setelah ada minimal dua kunjungan dengan data berat badan.</div>
@@ -156,7 +156,7 @@
 
 {{-- ── Riwayat kunjungan ───────────────────────── --}}
 <div class="card" style="padding:0;overflow:hidden;">
-    <div style="padding:18px 20px 0;"><h3 style="margin:0;font-size:14px;font-weight:700;color:#1e3528;">Riwayat Kunjungan ANC</h3></div>
+    <div style="padding:18px 20px 0;"><h3 style="margin:0;font-size:14px;font-weight:700;color:#233c32;">Riwayat Kunjungan ANC</h3></div>
     <div class="table-wrap" style="margin-top:12px;">
         <table class="data-table">
             <thead>
@@ -179,9 +179,9 @@
                     <td data-l="Hb">{{ $k->hb ?? '—' }}</td>
                     <td data-l="Catatan">
                         @forelse ($k->peringatan as $p)
-                            <span style="display:inline-block;padding:2px 7px;border-radius:5px;font-size:10px;font-weight:700;background:#fdeaea;color:#b3261e;margin:1px 2px 1px 0;">{{ $p }}</span>
+                            <span style="display:inline-block;padding:2px 7px;border-radius:5px;font-size:10px;font-weight:700;background:#fdf1f0;color:#b3261e;margin:1px 2px 1px 0;">{{ $p }}</span>
                         @empty
-                            <span style="display:inline-block;padding:2px 7px;border-radius:5px;font-size:10px;font-weight:700;background:#e8f3ec;color:#2f6b4a;">Normal</span>
+                            <span style="display:inline-block;padding:2px 7px;border-radius:5px;font-size:10px;font-weight:700;background:#e8f1eb;color:#4f7561;">Normal</span>
                         @endforelse
                     </td>
                 </tr>

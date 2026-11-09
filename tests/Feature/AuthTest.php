@@ -26,7 +26,7 @@ class AuthTest extends TestCase
     {
         $this->get('/login')
             ->assertOk()
-            ->assertSee('Selamat datang')
+            ->assertSee('Masuk ke Sistem')
             ->assertSee('Nama pengguna')
             ->assertSee('Kata sandi')
             ->assertSee('Masuk')

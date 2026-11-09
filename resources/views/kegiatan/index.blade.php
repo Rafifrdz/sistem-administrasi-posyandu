@@ -6,14 +6,11 @@
 
 @push('head')
 <style>
-    .chip { padding: 7px 13px; border-radius: 20px; border: 1.5px solid #dde5de; background: #fff; font-size: 12.5px; color: #4a6b57; text-decoration: none; font-weight: 600; transition: all .15s; }
-    .chip:hover { border-color: #b9d2c1; background: #f6faf7; }
-    .chip.on { background: #2f7d78; border-color: #2f7d78; color: #fff; }
     .st { padding: 3px 9px; border-radius: 20px; font-size: 10.5px; font-weight: 700; white-space: nowrap; }
-    .st-terjadwal { background: #e8f3ec; color: #2f6b4a; }
-    .st-selesai { background: #eef2f0; color: #6b8075; }
-    .st-dibatalkan { background: #fdeaea; color: #b3261e; }
-    .jenis-tag { display: inline-block; padding: 2px 8px; border-radius: 5px; font-size: 10px; font-weight: 700; background: #f0f5f1; color: #4a6b57; }
+    .st-terjadwal { background: #e8f1eb; color: #4f7561; }
+    .st-selesai { background: #eef2f0; color: #758179; }
+    .st-dibatalkan { background: #fdf1f0; color: #b3261e; }
+    .jenis-tag { display: inline-block; padding: 2px 8px; border-radius: 5px; font-size: 10px; font-weight: 700; background: #f0f5f1; color: #758179; }
 </style>
 @endpush
 
@@ -36,24 +33,22 @@
     <div class="card" style="flex:1;min-width:150px;"><span class="stat-label">Kelas Ibu Hamil</span><div class="stat-num">{{ $statistik['kelas'] }}</div></div>
 </div>
 
-<div class="card" style="margin-bottom:16px;">
-    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
-        <div style="display:flex;gap:8px;flex-wrap:wrap;">
-            <a href="{{ route('kegiatan.index') }}" class="chip {{ ! $jenis ? 'on' : '' }}">Semua jenis</a>
-            @foreach (\App\Models\Kegiatan::JENIS as $key => $label)
-                <a href="{{ route('kegiatan.index', ['jenis' => $key, 'status' => $status]) }}" class="chip {{ $jenis === $key ? 'on' : '' }}">{{ $label }}</a>
-            @endforeach
-        </div>
-        <form method="GET" action="{{ route('kegiatan.index') }}" style="margin-left:auto;">
-            <input type="hidden" name="jenis" value="{{ $jenis }}">
-            <select name="status" class="form-control" style="width:auto;height:38px;font-size:13px;" onchange="this.form.submit()">
-                <option value="">Semua status</option>
-                <option value="terjadwal" @selected($status === 'terjadwal')>Terjadwal</option>
-                <option value="selesai" @selected($status === 'selesai')>Selesai</option>
-                <option value="dibatalkan" @selected($status === 'dibatalkan')>Dibatalkan</option>
-            </select>
-        </form>
+<div class="filter-card">
+    <div class="chip-row">
+        <a href="{{ route('kegiatan.index') }}" class="chip {{ ! $jenis ? 'on' : '' }}">Semua jenis</a>
+        @foreach (\App\Models\Kegiatan::JENIS as $key => $label)
+            <a href="{{ route('kegiatan.index', ['jenis' => $key, 'status' => $status]) }}" class="chip {{ $jenis === $key ? 'on' : '' }}">{{ $label }}</a>
+        @endforeach
     </div>
+    <form method="GET" action="{{ route('kegiatan.index') }}" style="margin-left:auto;">
+        <input type="hidden" name="jenis" value="{{ $jenis }}">
+        <select name="status" class="filter-select" onchange="this.form.submit()">
+            <option value="">Semua status</option>
+            <option value="terjadwal" @selected($status === 'terjadwal')>Terjadwal</option>
+            <option value="selesai" @selected($status === 'selesai')>Selesai</option>
+            <option value="dibatalkan" @selected($status === 'dibatalkan')>Dibatalkan</option>
+        </select>
+    </form>
 </div>
 
 <div class="card" style="padding:0;overflow:hidden;">
@@ -102,7 +97,7 @@
                     <td colspan="6">
                         <div class="empty-state">
                             <div class="empty-icon"><img src="/icons/calendar-days.svg" alt="" style="width:22px;height:22px;opacity:.4;"></div>
-                            <div style="font-weight:600;color:#4a6b57;">Belum ada jadwal kegiatan</div>
+                            <div style="font-weight:600;color:#758179;">Belum ada jadwal kegiatan</div>
                         </div>
                     </td>
                 </tr>
@@ -233,7 +228,7 @@
                 <div class="del-icon">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/></svg>
                 </div>
-                <div style="font-size:16px;font-weight:700;color:#1e3528;">Hapus jadwal ini?</div>
+                <div style="font-size:16px;font-weight:700;color:#233c32;">Hapus jadwal ini?</div>
                 <div class="sub" id="hpNama" style="margin-top:6px;"></div>
             </div>
             <div class="md-foot">

@@ -9,7 +9,7 @@
     <link rel="icon" href="/favicon.ico?v=2" sizes="any">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png?v=2">
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=2">
-    <meta name="theme-color" content="#148a7e">
+    <meta name="theme-color" content="#4f7561">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -20,58 +20,25 @@
 
         body {
             font-family: 'Inter', sans-serif;
-            background: #f5f7f5;
-            color: #1e3528;
+            background: #f6f8f6;
+            color: #233c32;
             min-height: 100vh;
             display: flex;
-            flex-direction: column;
-            -webkit-font-smoothing: antialiased;
-        }
-
-        /* ── Header ───────────────────────────────── */
-        .topbar {
-            background: #fff;
-            border-bottom: 1px solid #e3eae4;
-            padding: 14px 28px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 16px;
-            flex-wrap: wrap;
-        }
-        .brand { display: flex; align-items: center; gap: 11px; }
-        .brand-mark {
-            width: 40px; height: 40px;
-            border-radius: 11px;
-            overflow: hidden;
-            flex-shrink: 0;
-            background: #148a7e;
-            box-shadow: 0 2px 8px rgba(20,138,126,.28);
-        }
-        .brand-mark img { width: 100%; height: 100%; object-fit: cover; display: block; }
-        .brand-text .name { font-size: 16px; font-weight: 700; color: #148a7e; letter-spacing: -.2px; }
-        .brand-text .tagline { font-size: 11px; color: #90a898; margin-top: 1px; }
-        .topbar-right { font-size: 12.5px; color: #90a898; }
-
-        /* ── Main ─────────────────────────────────── */
-        main {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
             padding: 40px 20px;
-            gap: 22px;
+            -webkit-font-smoothing: antialiased;
         }
 
-        .login-card {
-            background: #fff;
-            border: 1px solid #e3eae4;
-            border-radius: 16px;
-            box-shadow: 0 10px 40px rgba(20,35,27,.07);
+        /* Kartu utama: panel hijau + formulir */
+        .panel-masuk {
+            display: flex;
             width: 100%;
-            max-width: 424px;
-            padding: 34px 32px 30px;
+            max-width: 1160px;
+            background: #fff;
+            border: 1px solid #e4eae5;
+            border-radius: 14px;
+            overflow: hidden;
             animation: cardIn .35s cubic-bezier(.2,.8,.3,1);
         }
         @keyframes cardIn {
@@ -79,77 +46,124 @@
             to   { opacity: 1; transform: none; }
         }
 
-        .card-title {
-            font-size: 24px;
-            font-weight: 700;
-            color: #148a7e;
-            letter-spacing: -.4px;
+        /* Panel identitas layanan (kiri) */
+        .identitas {
+            width: 460px;
+            flex-shrink: 0;
+            background: #4f7561;
+            padding: 48px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            gap: 32px;
+            color: #fff;
         }
-        .card-sub {
-            font-size: 13px;
-            color: #7a9b88;
-            line-height: 1.6;
-            margin-top: 7px;
-            margin-bottom: 26px;
+        .identitas-atas { display: flex; flex-direction: column; gap: 32px; }
+
+        .lambang {
+            width: 48px; height: 48px;
+            border-radius: 12px;
+            background: #fff;
+            display: flex; align-items: center; justify-content: center;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+        .lambang img { width: 100%; height: 100%; object-fit: contain; display: block; }
+
+        .nama-layanan {
+            font-size: 21px;
+            font-weight: 600;
+            letter-spacing: -.2px;
+            margin-top: 12px;
         }
 
-        .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
-        .field label { font-size: 13px; font-weight: 600; color: #2d5540; }
+        .pesan-utama { display: flex; flex-direction: column; gap: 24px; }
+        .pesan-besar {
+            font-size: 34px;
+            font-weight: 600;
+            line-height: 1.25;
+            letter-spacing: -.6px;
+        }
+        .pesan-sedang {
+            font-size: 21px;
+            font-weight: 600;
+            line-height: 1.35;
+            letter-spacing: -.2px;
+        }
+        .pesan-kecil {
+            font-size: 14px;
+            line-height: 1.6;
+            color: rgba(255,255,255,.82);
+        }
+        .versi { font-size: 12px; color: rgba(255,255,255,.7); }
+
+        /* Formulir masuk (kanan) */
+        .formulir {
+            flex: 1;
+            padding: 64px;
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+            justify-content: center;
+        }
+        .judul-masuk { display: flex; flex-direction: column; gap: 8px; }
+        .judul-masuk h1 {
+            font-size: 32px;
+            font-weight: 600;
+            color: #233c32;
+            letter-spacing: -.6px;
+        }
+        .judul-masuk p { font-size: 14px; color: #758179; }
+
+        .kredensial { display: flex; flex-direction: column; gap: 20px; }
+        .field { display: flex; flex-direction: column; gap: 8px; }
+        .field label { font-size: 13px; font-weight: 500; color: #233c32; }
 
         .input-wrap { position: relative; }
         .input-wrap input {
             width: 100%;
-            height: 46px;
-            padding: 0 13px;
-            border: 1.5px solid #dde5de;
-            border-radius: 9px;
-            font-size: 13.5px;
+            height: 48px;
+            padding: 0 14px;
+            border: 1px solid #e4eae5;
+            border-radius: 8px;
+            font-size: 14px;
             font-family: inherit;
-            color: #1e3528;
+            color: #233c32;
             background: #fff;
             outline: none;
             transition: border-color .15s ease, box-shadow .15s ease;
         }
-        .input-wrap input::placeholder { color: #b0bdb5; }
+        .input-wrap input::placeholder { color: #a8b3ab; }
         .input-wrap input:focus {
             border-color: #4f7561;
             box-shadow: 0 0 0 3px rgba(79,117,97,.12);
         }
-        .input-wrap input.has-error { border-color: #c0392b; }
-        .input-wrap input.has-error:focus { box-shadow: 0 0 0 3px rgba(192,57,43,.1); }
+        .input-wrap input.has-error { border-color: #a3473e; }
+        .input-wrap input.has-error:focus { box-shadow: 0 0 0 3px rgba(163,71,62,.1); }
 
         /* ikon mata */
-        .input-wrap.has-toggle input { padding-right: 44px; }
+        .input-wrap.has-toggle input { padding-right: 46px; }
         .toggle-pw {
             position: absolute;
-            right: 6px; top: 50%;
+            right: 7px; top: 50%;
             transform: translateY(-50%);
             width: 34px; height: 34px;
             border: none; background: none; cursor: pointer;
             border-radius: 7px;
             display: flex; align-items: center; justify-content: center;
-            color: #90a898;
+            color: #758179;
             transition: background .15s ease, color .15s ease;
             padding: 0;
         }
-        .toggle-pw:hover { background: #f0f6f2; color: #3a5c48; }
+        .toggle-pw:hover { background: #f0f5f1; color: #4f7561; }
         .toggle-pw svg { width: 17px; height: 17px; }
-
-        .error-text {
-            font-size: 11.5px;
-            color: #c0392b;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
 
         .btn-masuk {
             width: 100%;
-            height: 46px;
-            margin-top: 8px;
+            height: 48px;
             background: #4f7561;
             border: none;
-            border-radius: 9px;
+            border-radius: 8px;
             color: #fff;
             font-size: 14px;
             font-weight: 600;
@@ -159,12 +173,10 @@
             align-items: center;
             justify-content: center;
             gap: 8px;
-            box-shadow: 0 1px 4px rgba(79,117,97,.25);
-            transition: background .15s ease, transform .1s ease, box-shadow .15s ease;
+            transition: background .15s ease;
         }
-        .btn-masuk:hover { background: #3a5c48; transform: translateY(-1px); box-shadow: 0 4px 14px rgba(79,117,97,.3); }
-        .btn-masuk:active { transform: translateY(0); box-shadow: none; }
-        .btn-masuk:disabled { opacity: .65; cursor: progress; transform: none; }
+        .btn-masuk:hover { background: #3f604e; }
+        .btn-masuk:disabled { opacity: .65; cursor: progress; }
 
         .spinner {
             width: 15px; height: 15px;
@@ -178,76 +190,72 @@
         .btn-masuk.loading .spinner { display: block; }
         .btn-masuk.loading .btn-label { opacity: .75; }
 
-        .helper {
-            font-size: 11.5px;
-            color: #90a898;
-            text-align: center;
-            line-height: 1.6;
-            margin-top: 16px;
-        }
-
         .alert {
             display: flex;
             align-items: center;
             gap: 9px;
-            padding: 11px 13px;
-            border-radius: 9px;
-            font-size: 12.5px;
+            padding: 12px 14px;
+            border-radius: 8px;
+            font-size: 13px;
             line-height: 1.5;
-            margin-bottom: 18px;
             animation: slideIn .22s ease;
         }
         @keyframes slideIn {
             from { opacity: 0; transform: translateY(-6px); }
             to   { opacity: 1; transform: none; }
         }
-        .alert-error { background: #fff0f0; border: 1px solid #f5c5c5; color: #c0392b; }
-        .alert-success { background: #e6f1ea; border: 1px solid #c0d9c8; color: #2d5540; }
+        .alert-error { background: #fdf1f0; border: 1px solid #f0cdc9; color: #a3473e; }
+        .alert-success { background: #e8f1eb; border: 1px solid #c0d9c8; color: #233c32; }
         .alert svg { width: 15px; height: 15px; flex-shrink: 0; }
 
-        .below-tagline {
-            font-size: 12px;
-            color: #a5b1a8;
-            letter-spacing: .2px;
-        }
+        .helper { font-size: 12px; color: #758179; line-height: 1.6; }
 
-        /* ── Footer ───────────────────────────────── */
-        footer {
-            padding: 18px;
-            text-align: center;
-            font-size: 11px;
-            color: #b0bdb5;
+        /* Responsif */
+        @media (max-width: 1000px) {
+            .panel-masuk { flex-direction: column; max-width: 520px; }
+            .identitas { width: 100%; padding: 32px; gap: 24px; }
+            .pesan-besar { font-size: 26px; }
+            .pesan-sedang { font-size: 18px; }
+            .formulir { padding: 32px; gap: 24px; }
+            .judul-masuk h1 { font-size: 26px; }
         }
-
         @media (max-width: 480px) {
-            .topbar { padding: 12px 16px; }
-            .topbar-right { display: none; }
-            .login-card { padding: 26px 22px 24px; border-radius: 14px; }
-            .card-title { font-size: 21px; }
-            main { padding: 28px 16px; }
+            body { padding: 20px 14px; }
+            .identitas { padding: 26px 22px; }
+            .formulir { padding: 26px 22px; }
+            .judul-masuk h1 { font-size: 23px; }
         }
     </style>
 </head>
 <body>
-    {{-- Header --}}
-    <header class="topbar">
-        <div class="brand">
-            <div class="brand-mark">
-                <img src="/logo.png?v=2" alt="Logo Posyandu Melati">
-            </div>
-            <div class="brand-text">
-                <div class="name">Posyandu Digital</div>
-                <div class="tagline">Lebih dekat, lebih terawat.</div>
-            </div>
-        </div>
-        <div class="topbar-right">Sistem Administrasi Posyandu</div>
-    </header>
+    <div class="panel-masuk">
 
-    {{-- Login --}}
-    <main>
-        <div class="login-card">
-            <h1 class="card-title">Selamat datang</h1>
-            <p class="card-sub">Masuk dengan akun kader untuk melanjutkan pelayanan Posyandu.</p>
+        {{-- Panel identitas layanan --}}
+        <aside class="identitas">
+            <div class="identitas-atas">
+                <div>
+                    <div class="lambang">
+                        <img src="/logo.png?v=2" alt="Logo Posyandu Melati">
+                    </div>
+                    <div class="nama-layanan">Posyandu Digital</div>
+                </div>
+
+                <div class="pesan-utama">
+                    <div class="pesan-besar">Lebih dekat,<br>lebih terawat.</div>
+                    <div class="pesan-sedang">Catatan rapi,<br>pelayanan lebih berarti.</div>
+                    <div class="pesan-kecil">Terima kasih sudah merawat warga hari ini.</div>
+                </div>
+            </div>
+
+            <div class="versi">Posyandu Digital · v1.0</div>
+        </aside>
+
+        {{-- Formulir --}}
+        <main class="formulir">
+            <div class="judul-masuk">
+                <h1>Masuk ke Sistem</h1>
+                <p>Sistem Administrasi Posyandu Ibu Hamil</p>
+            </div>
 
             @if(session('success'))
                 <div class="alert alert-success">
@@ -266,65 +274,63 @@
             <form method="POST" action="{{ route('login.attempt') }}" id="loginForm" novalidate>
                 @csrf
 
-                <div class="field">
-                    <label for="username">Nama pengguna</label>
-                    <div class="input-wrap">
-                        <input type="text"
-                               id="username"
-                               name="username"
-                               value="{{ old('username') }}"
-                               placeholder="Masukkan nama pengguna"
-                               class="{{ $errors->has('username') ? 'has-error' : '' }}"
-                               autocomplete="username"
-                               autofocus
-                               required>
+                <div class="kredensial">
+                    <div class="field">
+                        <label for="username">Nama pengguna</label>
+                        <div class="input-wrap">
+                            <input type="text"
+                                   id="username"
+                                   name="username"
+                                   value="{{ old('username') }}"
+                                   placeholder="Masukkan nama pengguna"
+                                   class="{{ $errors->has('username') ? 'has-error' : '' }}"
+                                   autocomplete="username"
+                                   autofocus
+                                   required>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label for="password">Kata sandi</label>
+                        <div class="input-wrap has-toggle">
+                            <input type="password"
+                                   id="password"
+                                   name="password"
+                                   placeholder="Masukkan kata sandi"
+                                   class="{{ $errors->has('password') ? 'has-error' : '' }}"
+                                   autocomplete="current-password"
+                                   required>
+                            <button type="button" class="toggle-pw" id="togglePw" aria-label="Tampilkan kata sandi" title="Tampilkan kata sandi">
+                                <svg id="eyeOpen" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>
+                                </svg>
+                                <svg id="eyeClosed" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
+                                    <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 10 8 10 8a18.5 18.5 0 0 1-2.16 3.19"/>
+                                    <path d="M6.61 6.61A18.5 18.5 0 0 0 2 12s3 8 10 8a9.12 9.12 0 0 0 5.39-1.61"/>
+                                    <path d="M14.12 14.12a3 3 0 1 1-4.24-4.24"/>
+                                    <path d="m2 2 20 20"/>
+                                </svg>
+                            </button>
+                        </div>
                     </div>
                 </div>
 
-                <div class="field">
-                    <label for="password">Kata sandi</label>
-                    <div class="input-wrap has-toggle">
-                        <input type="password"
-                               id="password"
-                               name="password"
-                               placeholder="Masukkan kata sandi"
-                               class="{{ $errors->has('password') ? 'has-error' : '' }}"
-                               autocomplete="current-password"
-                               required>
-                        <button type="button" class="toggle-pw" id="togglePw" aria-label="Tampilkan kata sandi" title="Tampilkan kata sandi">
-                            <svg id="eyeOpen" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>
-                            </svg>
-                            <svg id="eyeClosed" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
-                                <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 10 8 10 8a18.5 18.5 0 0 1-2.16 3.19"/>
-                                <path d="M6.61 6.61A18.5 18.5 0 0 0 2 12s3 8 10 8a9.12 9.12 0 0 0 5.39-1.61"/>
-                                <path d="M14.12 14.12a3 3 0 1 1-4.24-4.24"/>
-                                <path d="m2 2 20 20"/>
-                            </svg>
-                        </button>
-                    </div>
-                </div>
-
-                <button type="submit" class="btn-masuk" id="btnMasuk">
+                <button type="submit" class="btn-masuk" id="btnMasuk" style="margin-top:20px;">
                     <span class="spinner"></span>
                     <span class="btn-label">Masuk</span>
                 </button>
             </form>
 
             <p class="helper">Gunakan akun yang diberikan admin Posyandu.</p>
-        </div>
-
-        <p class="below-tagline">Lebih dekat, lebih terawat.</p>
-    </main>
-
-    <footer>Posyandu Digital • v1.0</footer>
+        </main>
+    </div>
 
     <script>
         // Toggle tampil / sembunyikan kata sandi
-        const pw       = document.getElementById('password');
-        const toggle   = document.getElementById('togglePw');
-        const eyeOpen  = document.getElementById('eyeOpen');
-        const eyeClosed= document.getElementById('eyeClosed');
+        const pw        = document.getElementById('password');
+        const toggle    = document.getElementById('togglePw');
+        const eyeOpen   = document.getElementById('eyeOpen');
+        const eyeClosed = document.getElementById('eyeClosed');
 
         toggle.addEventListener('click', () => {
             const tampil = pw.type === 'password';
