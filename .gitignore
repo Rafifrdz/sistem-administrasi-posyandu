@@ -33,3 +33,9 @@ Thumbs.db
 /_srv.log
 /_srv.err
 /Laporan-Sistem-Administrasi-Posyandu.docx
+
+# dokumen & catatan agen (tidak masuk repo)
+/AGENTS.md
+/CLAUDE.md
+/*.docx
+/*.pdf
