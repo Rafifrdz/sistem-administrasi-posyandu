@@ -430,14 +430,14 @@
                 <a href="{{ route('dashboard') }}" class="nav-item @yield('nav-active-dashboard')">
                     <img class="nav-icon" src="/icons/layout-dashboard.svg" alt=""> Dashboard
                 </a>
-                <a href="{{ route('peserta.index') }}" class="nav-item @yield('nav-active-peserta')">
-                    <img class="nav-icon" src="/icons/users-round.svg" alt=""> Data Peserta
+                <a href="{{ route('ibu-hamil.index') }}" class="nav-item @yield('nav-active-ibu-hamil')">
+                    <img class="nav-icon" src="/icons/users-round.svg" alt=""> Data Ibu Hamil
                 </a>
                 <a href="{{ route('kegiatan.index') }}" class="nav-item @yield('nav-active-kegiatan')">
                     <img class="nav-icon" src="/icons/calendar-days.svg" alt=""> Jadwal Kegiatan
                 </a>
-                <a href="{{ route('kehadiran.index') }}" class="nav-item @yield('nav-active-kehadiran')">
-                    <img class="nav-icon" src="/icons/clipboard-check.svg" alt=""> Kehadiran
+                <a href="{{ route('kunjungan.index') }}" class="nav-item @yield('nav-active-kunjungan')">
+                    <img class="nav-icon" src="/icons/clipboard-check.svg" alt=""> Kunjungan ANC
                 </a>
                 <a href="{{ route('laporan.index') }}" class="nav-item @yield('nav-active-laporan')">
                     <img class="nav-icon" src="/icons/chart-no-axes-combined.svg" alt=""> Laporan
@@ -471,7 +471,7 @@
                     <div class="avatar">{{ auth()->user()?->initials ?? '?' }}</div>
                     <div>
                         <div class="uname">{{ auth()->user()?->name ?? 'Tamu' }}</div>
-                        <div class="urole">{{ auth()->user()?->role ?? '—' }}</div>
+                        <div class="urole">{{ auth()->user()?->role_label ?? '—' }}</div>
                     </div>
                 </div>
                 <form method="POST" action="{{ route('logout') }}" style="margin:0;">

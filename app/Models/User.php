@@ -25,6 +25,28 @@ class User extends Authenticatable
         return strtoupper(implode('', array_map(fn($k) => mb_substr($k, 0, 1), $ambil)));
     }
 
+    /** Label jabatan untuk ditampilkan di antarmuka. */
+    public function getRoleLabelAttribute(): string
+    {
+        return match ($this->role) {
+            'kader' => 'Kader Posyandu',
+            'bidan' => 'Bidan Desa',
+            'admin' => 'Administrator',
+            default => (string) $this->role,
+        };
+    }
+
+    /** Bidan dan admin boleh mengelola data klinis (lab, rujukan, hapus). */
+    public function isBidan(): bool
+    {
+        return in_array($this->role, ['bidan', 'admin'], true);
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->role === 'admin';
+    }
+
     /**
      * Get the attributes that should be cast.
      *

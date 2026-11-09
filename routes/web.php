@@ -1,13 +1,12 @@
 <?php
+
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\IbuHamilController;
+use App\Http\Controllers\KegiatanController;
+use App\Http\Controllers\KunjunganAncController;
+use App\Http\Controllers\LaporanController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\{
-    AuthController,
-    DashboardController,
-    PesertaController,
-    KegiatanController,
-    KehadiranController,
-    LaporanController
-};
 
 /* ── Autentikasi (hanya untuk tamu) ─────────────────── */
 Route::middleware('guest')->group(function () {
@@ -23,12 +22,18 @@ Route::post('logout', [AuthController::class, 'logout'])
 Route::middleware('auth')->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
-    // PENTING: parameter harus eksplisit. Tanpa ini Laravel pluralisasi "peserta"
-    // menjadi "pesertum" sehingga route model binding gagal dan update/delete
-    // diam-diam tidak mengubah apa pun.
-    Route::resource('peserta', PesertaController::class)->parameters(['peserta' => 'peserta']);
-    Route::resource('kegiatan', KegiatanController::class)->parameters(['kegiatan' => 'kegiatan']);
-    Route::resource('kehadiran', KehadiranController::class)->parameters(['kehadiran' => 'kehadiran']);
+    // Nama parameter dibuat eksplisit agar route model binding tidak salah tebak.
+    Route::resource('ibu-hamil', IbuHamilController::class)
+        ->parameters(['ibu-hamil' => 'ibu'])
+        ->except(['create', 'edit']);
+
+    Route::resource('kegiatan', KegiatanController::class)
+        ->parameters(['kegiatan' => 'kegiatan'])
+        ->except(['create', 'edit', 'show']);
+
+    Route::resource('kunjungan', KunjunganAncController::class)
+        ->parameters(['kunjungan' => 'kunjungan'])
+        ->except(['create', 'edit', 'show']);
 
     Route::get('laporan', [LaporanController::class, 'index'])->name('laporan.index');
 });

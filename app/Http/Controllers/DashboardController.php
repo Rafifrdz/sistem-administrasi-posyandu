@@ -1,29 +1,79 @@
 <?php
+
 namespace App\Http\Controllers;
-use App\Models\{Peserta, Kegiatan, Kehadiran, ActivityLog};
-use Illuminate\Support\Facades\DB;
+
+use App\Models\ActivityLog;
+use App\Models\IbuHamil;
+use App\Models\Kegiatan;
+use App\Models\KunjunganAnc;
+use App\Services\KehamilanService;
 use Carbon\Carbon;
-class DashboardController extends Controller {
-    public function index() {
-        $totalPeserta = Peserta::count();
-        $balita = Peserta::where('kategori','balita')->count();
-        $ibuHamil = Peserta::where('kategori','ibu_hamil')->count();
-        $lansia = Peserta::where('kategori','lansia')->count();
-        // Statistik kehadiran 6 bulan terakhir
-        $bulanLabels = [];
-        $bulanData = [];
+
+class DashboardController extends Controller
+{
+    public function __construct(private KehamilanService $kehamilan) {}
+
+    public function index()
+    {
+        $semua = IbuHamil::all();
+
+        /* ── Kartu ringkasan ─────────────────────── */
+        $statistik = [
+            'total'  => $semua->count(),
+            'aktif'  => $semua->where('status', 'aktif')->count(),
+            'tm1'    => $semua->filter(fn ($i) => $i->trimester === 1)->count(),
+            'tm2'    => $semua->filter(fn ($i) => $i->trimester === 2)->count(),
+            'tm3'    => $semua->filter(fn ($i) => $i->trimester === 3)->count(),
+            'risiko' => $semua->whereIn('kategori_risiko', ['KRT', 'KRST'])->count(),
+            'kek'    => $semua->filter(fn ($i) => $i->kek)->count(),
+        ];
+
+        /* ── Anemia dari kunjungan terakhir tiap ibu ─ */
+        $anemia = KunjunganAnc::whereIn('id', function ($q) {
+            $q->selectRaw('max(id)')->from('kunjungan_anc')->groupBy('ibu_hamil_id');
+        })->where('hb', '<', 11)->count();
+
+        $statistik['anemia'] = $anemia;
+
+        /* ── Tren kunjungan 6 bulan terakhir ─────── */
+        $tren = [];
         for ($i = 5; $i >= 0; $i--) {
-            $bulan = Carbon::now()->subMonths($i);
-            $bulanLabels[] = $bulan->translatedFormat('M');
-            $bulanData[] = Kehadiran::whereHas('kegiatan', fn($q) => $q->whereYear('tanggal', $bulan->year)->whereMonth('tanggal', $bulan->month))->where('status','hadir')->count();
+            $bulan = now()->subMonths($i);
+            $tren[] = [
+                'label'  => $bulan->translatedFormat('M'),
+                'jumlah' => KunjunganAnc::whereYear('tanggal', $bulan->year)
+                                ->whereMonth('tanggal', $bulan->month)->count(),
+            ];
         }
-        $bulanIni = Carbon::now();
-        $hadir = end($bulanData);
-        $bulanLalu = $bulanData[count($bulanData)-2] ?? 0;
-        $persen = $totalPeserta > 0 ? round(($hadir / max($totalPeserta,1)) * 100, 1) : 0;
-        $selisih = $bulanLalu > 0 ? round((($hadir - $bulanLalu) / $bulanLalu) * 100, 1) : 0;
-        $kegiatanTerdekat = Kegiatan::where('tanggal','>=', Carbon::today())->where('status','terjadwal')->orderBy('tanggal')->take(3)->get();
-        $aktivitas = ActivityLog::latest()->take(5)->get();
-        return view('dashboard', compact('totalPeserta','balita','ibuHamil','lansia','bulanLabels','bulanData','hadir','persen','selisih','kegiatanTerdekat','aktivitas','bulanIni'));
+        $trenMaks = max(1, collect($tren)->max('jumlah'));
+
+        /* ── Distribusi trimester (donat) ────────── */
+        $donat = [
+            ['label' => 'Trimester 1', 'nilai' => $statistik['tm1'], 'warna' => '#4f7561'],
+            ['label' => 'Trimester 2', 'nilai' => $statistik['tm2'], 'warna' => '#7ba98c'],
+            ['label' => 'Trimester 3', 'nilai' => $statistik['tm3'], 'warna' => '#c8a45c'],
+        ];
+
+        /* ── Ibu yang terlambat / belum ANC ──────── */
+        $terlambat = $semua->filter(fn ($i) => $i->terlambat_anc)
+            ->sortByDesc('usia_kehamilan')
+            ->take(5)
+            ->values();
+
+        /* ── Ibu risiko tinggi ───────────────────── */
+        $risikoTinggi = $semua->whereIn('kategori_risiko', ['KRT', 'KRST'])
+            ->sortByDesc('skor_kspr')
+            ->take(5)
+            ->values();
+
+        /* ── Kegiatan terdekat ───────────────────── */
+        $kegiatan = Kegiatan::mendatang()->orderBy('tanggal')->take(4)->get();
+
+        /* ── Aktivitas terbaru ───────────────────── */
+        $log = ActivityLog::latest()->take(5)->get();
+
+        return view('dashboard', compact(
+            'statistik', 'tren', 'trenMaks', 'donat', 'terlambat', 'risikoTinggi', 'kegiatan', 'log'
+        ));
     }
 }

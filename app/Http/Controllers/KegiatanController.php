@@ -2,123 +2,79 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\{Kegiatan, ActivityLog};
+use App\Models\ActivityLog;
+use App\Models\Kegiatan;
 use Illuminate\Http\Request;
 
 class KegiatanController extends Controller
 {
     public function index(Request $request)
     {
-        $q = Kegiatan::query();
+        $jenis  = $request->query('jenis');
+        $status = $request->query('status');
 
-        if ($request->filled('search')) {
-            $s = $request->search;
-            $q->where(function ($w) use ($s) {
-                $w->where('nama', 'like', "%{$s}%")->orWhere('lokasi', 'like', "%{$s}%");
-            });
+        $query = Kegiatan::query()->orderByDesc('tanggal');
+
+        if ($jenis) {
+            $query->where('jenis', $jenis);
         }
-        if ($request->filled('status') && $request->status !== 'semua') {
-            $q->where('status', $request->status);
-        }
-        if ($request->filled('kategori') && $request->kategori !== 'semua') {
-            $q->where('kategori', $request->kategori);
+        if ($status) {
+            $query->where('status', $status);
         }
 
-        $kegiatan = $q->orderBy('tanggal', 'desc')->paginate(20)->withQueryString();
+        $daftar = $query->paginate(12)->withQueryString();
 
-        $totalKegiatan = Kegiatan::count();
-        $terjadwal     = Kegiatan::where('status', 'terjadwal')->count();
-        $selesai       = Kegiatan::where('status', 'selesai')->count();
-        $dibatalkan    = Kegiatan::where('status', 'dibatalkan')->count();
+        $statistik = [
+            'terjadwal' => Kegiatan::where('status', 'terjadwal')->count(),
+            'selesai'   => Kegiatan::where('status', 'selesai')->count(),
+            'mendatang' => Kegiatan::mendatang()->count(),
+            'kelas'     => Kegiatan::where('jenis', 'kelas_ibu_hamil')->count(),
+        ];
 
-        $kegiatanJson = $kegiatan->getCollection()->map(fn($k) => [
-            'id'           => $k->id,
-            'nama'         => $k->nama,
-            'tanggal'      => $k->tanggal ? $k->tanggal->format('Y-m-d') : '',
-            'tanggal_fmt'  => $k->tanggal ? $k->tanggal->translatedFormat('l, d F Y') : '',
-            'jam_mulai'    => $k->jam_mulai ? substr($k->jam_mulai, 0, 5) : '',
-            'jam_selesai'  => $k->jam_selesai ? substr($k->jam_selesai, 0, 5) : '',
-            'lokasi'       => $k->lokasi,
-            'kategori'     => $k->kategori,
-            'kategori_lbl' => ucfirst(str_replace('_', ' ', $k->kategori)),
-            'status'       => $k->status,
-            'status_lbl'   => $k->status_label,
-            'keterangan'   => $k->keterangan,
-            'jumlah'       => $k->kehadiran()->count(),
-        ])->values();
+        $kegiatanJson = $daftar->getCollection()->mapWithKeys(fn (Kegiatan $k) => [
+            $k->id => [
+                'id'         => $k->id,
+                'nama'       => $k->nama,
+                'tanggal'    => optional($k->tanggal)->format('Y-m-d'),
+                'tanggal_label' => $k->tanggal_label,
+                'jam_mulai'  => substr((string) $k->jam_mulai, 0, 5),
+                'jam_selesai' => substr((string) $k->jam_selesai, 0, 5),
+                'jam'        => $k->jam_label,
+                'lokasi'     => $k->lokasi,
+                'jenis'      => $k->jenis,
+                'jenis_label' => $k->jenis_label,
+                'trimester_target' => $k->trimester_target,
+                'trimester_label'  => $k->trimester_label,
+                'status'     => $k->status,
+                'status_label' => $k->status_label,
+                'keterangan' => $k->keterangan,
+                'jumlah_kunjungan' => $k->kunjungan()->count(),
+            ],
+        ]);
 
-        return view('kegiatan.index', compact(
-            'kegiatan', 'totalKegiatan', 'terjadwal', 'selesai', 'dibatalkan', 'kegiatanJson'
-        ));
-    }
-
-    public function create()
-    {
-        return view('kegiatan.create');
+        return view('kegiatan.index', compact('daftar', 'statistik', 'jenis', 'status', 'kegiatanJson'));
     }
 
     public function store(Request $request)
     {
-        $data = $request->validate([
-            'nama'        => 'required|string|max:255',
-            'tanggal'     => 'required|date',
-            'jam_mulai'   => 'required',
-            'jam_selesai' => 'required|after:jam_mulai',
-            'lokasi'      => 'required|string|max:255',
-            'kategori'    => 'required|in:balita,ibu_hamil,lansia,umum',
-            'keterangan'  => 'nullable|string',
-        ], [
-            'jam_selesai.after' => 'Jam selesai harus lebih dari jam mulai.',
-        ]);
-
+        $data = $this->validasi($request);
         $kegiatan = Kegiatan::create($data);
 
-        ActivityLog::create([
-            'type'      => 'kegiatan_tambah',
-            'deskripsi' => "{$kegiatan->nama} dijadwalkan",
-            'meta'      => $kegiatan->tanggal->format('d F Y') . ' • oleh ' . (auth()->user()?->name ?? 'Sistem'),
-            'waktu'     => now()->format('H.i'),
-        ]);
+        $this->catat('kegiatan_tambah', 'Menambahkan jadwal kegiatan', $kegiatan->nama);
 
-        return redirect()->route('kegiatan.index')->with('success', 'Kegiatan berhasil ditambahkan.');
-    }
-
-    public function show(Kegiatan $kegiatan)
-    {
-        $kehadiran = $kegiatan->kehadiran()->with('peserta')->get();
-        return view('kegiatan.show', compact('kegiatan', 'kehadiran'));
-    }
-
-    public function edit(Kegiatan $kegiatan)
-    {
-        return view('kegiatan.edit', compact('kegiatan'));
+        return redirect()->route('kegiatan.index')
+            ->with('sukses', "Jadwal \"{$kegiatan->nama}\" berhasil ditambahkan.");
     }
 
     public function update(Request $request, Kegiatan $kegiatan)
     {
-        $data = $request->validate([
-            'nama'        => 'required|string|max:255',
-            'tanggal'     => 'required|date',
-            'jam_mulai'   => 'required',
-            'jam_selesai' => 'required|after:jam_mulai',
-            'lokasi'      => 'required|string|max:255',
-            'kategori'    => 'required|in:balita,ibu_hamil,lansia,umum',
-            'status'      => 'required|in:terjadwal,selesai,dibatalkan',
-            'keterangan'  => 'nullable|string',
-        ], [
-            'jam_selesai.after' => 'Jam selesai harus lebih dari jam mulai.',
-        ]);
-
+        $data = $this->validasi($request);
         $kegiatan->update($data);
 
-        ActivityLog::create([
-            'type'      => 'kegiatan_update',
-            'deskripsi' => "Jadwal {$kegiatan->nama} diperbarui",
-            'meta'      => $kegiatan->tanggal->format('d F Y') . ' • oleh ' . (auth()->user()?->name ?? 'Sistem'),
-            'waktu'     => now()->format('H.i'),
-        ]);
+        $this->catat('kegiatan_update', 'Memperbarui jadwal kegiatan', $kegiatan->nama);
 
-        return redirect()->route('kegiatan.index')->with('success', 'Kegiatan berhasil diperbarui.');
+        return redirect()->route('kegiatan.index')
+            ->with('sukses', "Jadwal \"{$kegiatan->nama}\" berhasil diperbarui.");
     }
 
     public function destroy(Kegiatan $kegiatan)
@@ -126,13 +82,36 @@ class KegiatanController extends Controller
         $nama = $kegiatan->nama;
         $kegiatan->delete();
 
+        $this->catat('kegiatan_hapus', 'Menghapus jadwal kegiatan', $nama);
+
+        return redirect()->route('kegiatan.index')
+            ->with('sukses', "Jadwal \"{$nama}\" telah dihapus.");
+    }
+
+    private function validasi(Request $request): array
+    {
+        return $request->validate([
+            'nama'             => ['required', 'string', 'max:150'],
+            'tanggal'          => ['required', 'date'],
+            'jam_mulai'        => ['required', 'date_format:H:i'],
+            'jam_selesai'      => ['required', 'date_format:H:i', 'after:jam_mulai'],
+            'lokasi'           => ['required', 'string', 'max:150'],
+            'jenis'            => ['required', 'in:posyandu_rutin,kelas_ibu_hamil,kunjungan_rumah,usg,skrining'],
+            'trimester_target' => ['required', 'in:semua,1,2,3'],
+            'status'           => ['required', 'in:terjadwal,selesai,dibatalkan'],
+            'keterangan'       => ['nullable', 'string', 'max:255'],
+        ], [
+            'jam_selesai.after' => 'Jam selesai harus lebih besar daripada jam mulai.',
+        ]);
+    }
+
+    private function catat(string $type, string $deskripsi, ?string $meta = null): void
+    {
         ActivityLog::create([
-            'type'      => 'kegiatan_hapus',
-            'deskripsi' => "Kegiatan {$nama} dihapus",
-            'meta'      => 'oleh ' . (auth()->user()?->name ?? 'Sistem'),
+            'type'      => $type,
+            'deskripsi' => $deskripsi,
+            'meta'      => $meta,
             'waktu'     => now()->format('H.i'),
         ]);
-
-        return redirect()->route('kegiatan.index')->with('success', "Kegiatan {$nama} berhasil dihapus.");
     }
 }

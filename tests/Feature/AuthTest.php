@@ -35,7 +35,7 @@ class AuthTest extends TestCase
 
     public function test_tamu_diarahkan_ke_login(): void
     {
-        foreach (['/', '/peserta', '/kegiatan', '/kehadiran', '/laporan'] as $uri) {
+        foreach (['/', '/ibu-hamil', '/kegiatan', '/kunjungan', '/laporan'] as $uri) {
             $this->get($uri)->assertRedirect(route('login'));
         }
     }

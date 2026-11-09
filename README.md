@@ -1,41 +1,60 @@
-# Sistem Administrasi Posyandu
+# Sistem Administrasi Posyandu — Fokus Ibu Hamil
 
 > Proyek Akhir mata kuliah Pemrograman Web — Kelas B
 > Program Studi Teknologi Informasi, Fakultas Ilmu Komputer, Universitas Brawijaya
 
-Aplikasi web untuk mengelola data posyandu — peserta, jadwal kegiatan, dan kehadiran — yang menggantikan pencatatan kertas menjadi satu basis data terpusat.
+Aplikasi web untuk memantau kehamilan di posyandu: mencatat data ibu hamil, menghitung usia kehamilan dan taksiran persalinan, menilai risiko kehamilan, serta merekam hasil pemeriksaan ANC sesuai standar 10T.
 
-![Dashboard](docs/dashboard.jpg)
+![Dashboard](docs/dashboard.png)
 
 ## Latar belakang
 
-Mayoritas posyandu masih mencatat data di kertas. Kader menghabiskan hingga 40% waktu operasional hanya untuk merekap ulang data bulanan ke Puskesmas, data mudah hilang, dan tren tumbuh kembang anak tidak terpantau sehingga deteksi dini stunting sering terlambat.
+Posyandu adalah garda terdepan kesehatan ibu dan anak, tetapi pencatatannya masih dilakukan di atas kertas. Kader menghabiskan banyak waktu merekap ulang data ke Puskesmas, riwayat pemeriksaan ibu mudah hilang, dan deteksi dini kehamilan berisiko sering terlambat. Akibatnya intervensi stunting dan komplikasi persalinan tidak tepat waktu.
 
-Aplikasi ini memindahkan seluruh proses itu ke dalam sistem terpusat dengan pencatatan yang dirancang mengikuti cara kerja nyata kader di lapangan.
+Aplikasi ini memindahkan seluruh proses itu ke satu basis data terpusat, dengan alur kerja yang mengikuti prosedur posyandu yang sebenarnya.
+
+## Dasar acuan
+
+Sistem ini tidak mengarang aturan sendiri — semua perhitungan dan alur mengikuti standar Kementerian Kesehatan:
+
+| Acuan | Isi |
+|---|---|
+| **ANC 6×** (Permenkes 21/2021) | Kunjungan antenatal minimal 6 kali: TM1 1×, TM2 2×, TM3 3× |
+| **10T** (Permenkes 21/2021 Ps. 13) | BB/TB, tensi, LiLA, TFU, presentasi & DJJ, imunisasi TT, tablet Fe ≥90, lab, tata laksana, konseling |
+| **KSPR** | Kartu Skor Poedji Rochjati untuk menilai risiko kehamilan (KRR / KRT / KRST) |
+| **Buku KIA** | Instrumen pencatatan ibu hamil yang dipakai kader di lapangan |
 
 ## Fitur
 
 | Fitur | Keterangan |
 |---|---|
-| Login & Logout | Autentikasi kader dengan nama pengguna dan kata sandi; halaman administrasi tertutup bagi tamu |
-| Dashboard | Ringkasan peserta per kategori, tren kehadiran enam bulan, kegiatan terdekat, aktivitas terbaru |
-| Data Peserta | Daftar terpaginaasi dengan pencarian nama/NIK dan filter kategori (balita, ibu hamil, lansia) |
-| Kelola Peserta | Tambah, detail, ubah, hapus melalui panel overlay dengan validasi NIK 16 digit unik |
-| Jadwal Kegiatan | Daftar kegiatan dengan filter status/kategori; CRUD termasuk perubahan status |
-| Catat Kehadiran | Pencatatan massal satu kegiatan untuk banyak peserta sekaligus |
-| Riwayat Kehadiran | Filter periode (bulan berjalan, tiga bulan, semua) dan rekap per kegiatan |
-| Laporan Tahunan | Kehadiran per bulan selama 12 bulan dan distribusi peserta per kategori |
-| Log Aktivitas | Jejak audit setiap perubahan data beserta waktu dan pelaku |
+| Login & Logout | Autentikasi kader/bidan; seluruh halaman administrasi tertutup bagi tamu |
+| Dashboard | Ringkasan bumil aktif, sebaran trimester, bumil risiko tinggi, KEK, anemia, tren kunjungan 6 bulan, dan daftar yang terlambat ANC |
+| Data Ibu Hamil | Daftar dengan pencarian nama/NIK/suami, filter trimester dan kategori risiko |
+| Pendaftaran Ibu Hamil | Form lengkap: identitas, HPHT, GPA, antropometri pra-hamil, riwayat obstetri |
+| Kartu Ibu | Halaman detail: usia kehamilan, HPL, skor KSPR beserta faktornya, kecukupan ANC per trimester, grafik kenaikan berat badan, riwayat kunjungan |
+| Jadwal Kegiatan | Pemeriksaan ANC rutin, kelas ibu hamil, USG, kunjungan rumah, skrining — dengan sasaran trimester |
+| Kunjungan ANC | Pencatatan 10T lengkap; usia kehamilan dan kode K1–K6 dihitung otomatis |
+| Peringatan Klinis | Otomatis menandai hipertensi (≥140/90), anemia (Hb <11), KEK (LiLA <23,5), DJJ abnormal, proteinuria |
+| Laporan | Cakupan K1–K6, rekap bulanan, distribusi risiko, daftar ibu risiko tinggi, siap cetak |
+| Log Aktivitas | Jejak audit setiap perubahan data |
 
-**Keunggulan utama:** peserta yang tidak dicentang otomatis tercatat *tidak hadir*, sehingga penyebut laporan selalu benar. Seluruh aksi CRUD dilakukan lewat panel overlay tanpa berpindah halaman — pencatatan satu warga selesai di bawah 30 detik.
+### Perhitungan otomatis
+
+- **Usia kehamilan** — `floor((hari ini − HPHT) / 7)` minggu
+- **Taksiran persalinan** — HPHT + 280 hari (rumus Naegele)
+- **Trimester** — ≤12 minggu TM1 · 13–27 TM2 · ≥28 TM3
+- **IMT pra-hamil** — BB / (TB/100)²
+- **Skor KSPR** — 10 faktor ibu + 4 faktor temuan kunjungan → KRR ≤4 · KRT 6–10 · KRST ≥12
+- **Status ANC** — dibandingkan dengan target kumulatif per trimester
 
 ## Teknologi
 
-- **Laravel** — kerangka kerja PHP dengan pola MVC, routing, Eloquent, migrasi, autentikasi sesi, validasi server-side
-- **PHP** — logika aplikasi sisi server
+- **Laravel 12** — MVC, routing, Eloquent, migrasi, autentikasi sesi, validasi server-side
+- **PHP 8.4** — logika aplikasi dan perhitungan kebidanan
 - **MySQL** — basis data relasional utama
-- **Blade + CSS + JavaScript** — tampilan responsif hingga lebar 720 px, grafik, dan panel overlay
-- **PHPUnit** — 32 uji fungsional otomatis
+- **Blade + CSS + JavaScript** — tampilan responsif hingga 720 px, grafik SVG, panel modal
+- **PHPUnit** — 46 uji otomatis (157 asersi)
 
 ## Menjalankan secara lokal
 
@@ -59,8 +78,6 @@ DB_USERNAME=root
 DB_PASSWORD=
 ```
 
-Buat basis data lalu jalankan migrasi beserta data contoh:
-
 ```bash
 mysql -u root -e "CREATE DATABASE posyandu CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
 php artisan migrate:fresh --seed
@@ -74,23 +91,30 @@ Buka <http://127.0.0.1:8000>.
 | Nama pengguna | Kata sandi | Peran |
 |---|---|---|
 | `siti` | `posyandu123` | Kader Posyandu |
+| `bidan` | `bidan123` | Bidan Desa |
 | `admin` | `admin123` | Administrator |
+
+Data contoh berisi 20 ibu hamil pada berbagai trimester, 10 jadwal kegiatan, dan 51 catatan kunjungan ANC — termasuk kasus risiko rendah, tinggi, sangat tinggi, KEK, anemia, dan hipertensi.
 
 ## Struktur basis data
 
 | Tabel | Isi |
 |---|---|
-| `users` | Akun kader dan administrator |
-| `peserta` | Data peserta posyandu beserta kategori dan data wali |
-| `kegiatan` | Jadwal kegiatan: tanggal, jam, lokasi, kategori, status |
-| `kehadiran` | Satu baris per peserta per kegiatan (hadir / tidak hadir) |
+| `users` | Akun kader, bidan, dan administrator |
+| `ibu_hamil` | Data sasaran: identitas, HPHT, GPA, antropometri pra-hamil, riwayat obstetri, skor KSPR |
+| `kegiatan` | Jadwal layanan: jenis, sasaran trimester, lokasi, status |
+| `kunjungan_anc` | Satu baris per pemeriksaan: 10T lengkap + tanda bahaya + tindak lanjut |
 | `activity_log` | Jejak audit perubahan data |
 
 ## Tampilan
 
-| Halaman Masuk | Data Peserta | Riwayat Kehadiran |
+| Data Ibu Hamil | Kartu Ibu | Kunjungan ANC |
 |---|---|---|
-| ![Login](docs/login.jpg) | ![Peserta](docs/peserta.jpg) | ![Kehadiran](docs/kehadiran.jpg) |
+| ![Ibu Hamil](docs/ibu-hamil.png) | ![Kartu Ibu](docs/kartu-ibu.png) | ![Kunjungan](docs/kunjungan.png) |
+
+| Dashboard | Laporan |
+|---|---|
+| ![Dashboard](docs/dashboard.png) | ![Laporan](docs/laporan.png) |
 
 ## Pengujian
 
@@ -98,7 +122,7 @@ Buka <http://127.0.0.1:8000>.
 php artisan test
 ```
 
-32 uji fungsional, 131 asersi — mencakup CRUD peserta, kegiatan, kehadiran, serta autentikasi.
+46 uji otomatis, 157 asersi — mencakup CRUD ibu hamil, pencatatan kunjungan ANC, perhitungan usia kehamilan/HPL/IMT, penilaian skor KSPR, deteksi peringatan klinis, dan autentikasi.
 
 ## Dokumentasi
 
@@ -110,5 +134,5 @@ php artisan test
 
 | Nama | NIM | Kontribusi |
 |---|---|---|
-| Muhammad Rafi Firdaus | 255150701111016 | Basis data, migrasi, model, pengendali, logika kehadiran, pengujian |
-| Fanisah Wulandari | 255150700111027 | Antarmuka Figma, tampilan Blade, panel overlay, dashboard, laporan |
+| Muhammad Rafi Firdaus | 255150701111016 | Basis data, migrasi, model, layanan perhitungan kehamilan & KSPR, pengendali, pengujian |
+| Fanisah Wulandari | 255150700111027 | Antarmuka Figma, tampilan Blade, panel modal, dashboard, laporan |
