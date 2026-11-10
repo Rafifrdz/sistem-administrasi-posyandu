@@ -12,30 +12,25 @@ Semua layanan di bawah ini **gratis dan tidak minta kartu kredit**.
 
 ---
 
-## Langkah 1 — Buat database di Neon (5 menit)
+## Langkah 1 — Ambil connection string Neon
 
-1. Buka **https://neon.tech** → **Sign up** → pilih **Continue with GitHub**
-2. Klik **Create project**
-   - Name: `posyandu`
-   - Region: **Singapore** (paling dekat)
-3. Setelah selesai, buka **Connection string** / **Connect** → pilih **Laravel** atau **PHP**
-4. Catat 5 nilai ini dari connection string:
+Project Neon sudah terhubung: **`proud-recipe-92785484`** (org `org-shiny-recipe-43985396`).
+`neon init` sudah menulis `DATABASE_URL` dan `DATABASE_URL_UNPOOLED` ke `.env`.
 
-```
-postgresql://USER:PASSWORD@HOST/DATABASE?sslmode=require
-```
+Aplikasi memakai **endpoint unpooled** (`DATABASE_URL_UNPOOLED`), bukan yang ber-`-pooler`.
+Sebab: pooler Neon (PgBouncer) memutus transaksi saat DDL dijalankan setelah query,
+sehingga `migrate` gagal dengan `current transaction is aborted`.
 
-| Env var | Ambil dari |
-|---|---|
-| `DB_HOST` | bagian setelah `@`, sebelum `/` |
-| `DB_PORT` | `5432` |
-| `DB_DATABASE` | bagian setelah `/` (biasanya `neondb`) |
-| `DB_USERNAME` | sebelum `:` |
-| `DB_PASSWORD` | setelah `:` sampai `@` |
+Cara mengambilnya:
 
-**Alternatif:** kalau mau pakai **Supabase** (https://supabase.com), caranya sama —
-Project Settings → Database → Connection string → mode **Session**.
-Nilainya dipetakan ke env var yang sama di atas.
+1. Buka **https://console.neon.tech** → project `proud-recipe-92785484`
+2. **Connect** → **Connection pooling: OFF**
+3. Copy connection string (format `postgresql://...?sslmode=require`)
+
+> Jangan pakai host yang mengandung `-pooler` untuk aplikasi ini.
+
+**Alternatif:** kalau mau pakai **Supabase**, Project Settings → Database →
+Connection string → mode **Session**. Formatnya sama, isinya sama-sama masuk ke `DB_URL`.
 
 ---
 
@@ -51,10 +46,7 @@ Nilainya dipetakan ke env var yang sama di atas.
 |---|---|
 | `APP_KEY` | `base64:1RUn7IHL9F5VP5J1aBXOnuZVLMOoeYz2ey6ZcvBiAMc=` |
 | `APP_URL` | kosongkan dulu, diisi di langkah 4 |
-| `DB_HOST` | dari Neon |
-| `DB_DATABASE` | dari Neon |
-| `DB_USERNAME` | dari Neon |
-| `DB_PASSWORD` | dari Neon |
+| `DB_URL` | connection string **unpooled** dari Neon |
 
 6. Klik **Deploy**. Build pertama ~5–8 menit (install PHP, composer, dll).
 

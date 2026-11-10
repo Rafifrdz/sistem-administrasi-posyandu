@@ -40,3 +40,4 @@ Thumbs.db
 /*.docx
 /*.pdf
 _tools/
+.neon

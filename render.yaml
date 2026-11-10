@@ -27,19 +27,11 @@ services:
       - key: LOG_LEVEL
         value: warning
 
-      # ── Database (Neon / Supabase) ──
+      # ── Database (Neon) ──
       - key: DB_CONNECTION
         value: pgsql
-      - key: DB_HOST
-        sync: false
-      - key: DB_PORT
-        value: "5432"
-      - key: DB_DATABASE
-        sync: false
-      - key: DB_USERNAME
-        sync: false
-      - key: DB_PASSWORD
-        sync: false
+      - key: DB_URL
+        sync: false          # tempel connection string UNPOOLED dari Neon
       - key: DB_SSLMODE
         value: require
 
