@@ -12,7 +12,9 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        // Di belakang tunnel/proxy (Cloudflare, ngrok, hosting) agar Laravel
+        // tahu request aslinya https — kalau tidak, redirect & aset bisa gagal.
+        $middleware->trustProxies(at: '*');
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(
