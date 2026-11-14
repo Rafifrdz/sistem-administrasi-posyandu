@@ -18,7 +18,7 @@ class IbuHamilController extends Controller
         $filter = $request->query('filter');   // trimester1..3 | risiko
         $risiko = $request->query('risiko');   // KRR | KRT | KRST
 
-        $query = IbuHamil::query()->cari($kata);
+        $query = IbuHamil::query()->with('kunjungan')->cari($kata);   // eager load: cegah N+1
 
         // Filter trimester memakai perbandingan tanggal HPHT
         if ($filter && str_starts_with($filter, 'tm')) {

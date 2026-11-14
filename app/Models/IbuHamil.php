@@ -155,11 +155,24 @@ class IbuHamil extends Model
 
     public function getJumlahKunjunganAttribute(): int
     {
-        return $this->kunjungan()->count();
+        if (array_key_exists('kunjungan_count', $this->attributes)) {
+            return (int) $this->attributes['kunjungan_count'];
+        }
+
+        return $this->relationLoaded('kunjungan')
+            ? $this->kunjungan->count()
+            : $this->kunjungan()->count();
     }
 
     public function getAncPerTrimesterAttribute(): array
     {
+        if ($this->relationLoaded('kunjungan')) {
+            return $this->kunjungan
+                ->groupBy('trimester')
+                ->map(fn ($baris) => $baris->count())
+                ->toArray();
+        }
+
         return $this->kunjungan()
             ->reorder()                       // buang orderBy relasi agar tidak bentrok dengan GROUP BY
             ->selectRaw('trimester, count(*) as jumlah')
@@ -201,9 +214,12 @@ class IbuHamil extends Model
     /** True bila ibu sudah lewat jadwal kunjungan berikutnya. */
     public function getTerlambatAncAttribute(): bool
     {
-        // reorder() wajib: relasi kunjungan() sudah membawa orderBy('tanggal') naik
+        // Kalau relasi sudah dimuat, hitung di memori; jangan query per baris.
+        // reorder() wajib pada jalur query: relasi kunjungan() membawa orderBy('tanggal') naik
         // sehingga latest() tanpa reorder akan tetap mengambil kunjungan terlama.
-        $terakhir = $this->kunjungan()->reorder()->latest('tanggal')->first();
+        $terakhir = $this->relationLoaded('kunjungan')
+            ? $this->kunjungan->sortByDesc('tanggal')->first()
+            : $this->kunjungan()->reorder()->latest('tanggal')->first();
 
         if (! $terakhir) {
             return $this->usia_kehamilan >= 12;

@@ -15,7 +15,7 @@ class DashboardController extends Controller
 
     public function index()
     {
-        $semua = IbuHamil::all();
+        $semua = IbuHamil::with('kunjungan')->get();   // eager load: cegah N+1
 
         /* ── Kartu ringkasan ─────────────────────── */
         $statistik = [
@@ -36,13 +36,20 @@ class DashboardController extends Controller
         $statistik['anemia'] = $anemia;
 
         /* ── Tren kunjungan 6 bulan terakhir ─────── */
+        // Satu query untuk enam bulan, lalu dikelompokkan di memori.
+        // Sebelumnya enam query terpisah, masing-masing menunggu jaringan.
+        $awalTren = now()->startOfMonth()->subMonths(5);
+        $perBulan = KunjunganAnc::where('tanggal', '>=', $awalTren->toDateString())
+            ->pluck('tanggal')
+            ->groupBy(fn ($t) => Carbon::parse($t)->format('Y-m'))
+            ->map->count();
+
         $tren = [];
         for ($i = 5; $i >= 0; $i--) {
-            $bulan = now()->subMonths($i);
+            $bulan = now()->startOfMonth()->subMonths($i);
             $tren[] = [
                 'label'  => $bulan->translatedFormat('M'),
-                'jumlah' => KunjunganAnc::whereYear('tanggal', $bulan->year)
-                                ->whereMonth('tanggal', $bulan->month)->count(),
+                'jumlah' => (int) ($perBulan[$bulan->format('Y-m')] ?? 0),
             ];
         }
         $trenMaks = max(1, collect($tren)->max('jumlah'));

@@ -20,32 +20,36 @@ class LaporanController extends Controller
         // supaya tidak muncul baris bulan depan yang masih nol.
         $bulanAkhir = $tahun === (int) now()->year ? (int) now()->month : 12;
 
+        // Satu query untuk seluruh tahun. Rekap bulanan dan cakupan K1–K6
+        // dihitung dari koleksi yang sama, bukan 78 query terpisah.
+        $kunjunganTahun = KunjunganAnc::whereYear('tanggal', $tahun)->get();
+
         $bulanan = [];
         for ($b = 1; $b <= $bulanAkhir; $b++) {
-            $dasar = KunjunganAnc::whereYear('tanggal', $tahun)->whereMonth('tanggal', $b);
+            $baris = $kunjunganTahun->filter(fn ($k) => (int) $k->tanggal->month === $b);
 
             $bulanan[] = [
                 'bulan'      => Carbon::create($tahun, $b, 1)->translatedFormat('M'),
-                'kunjungan'  => (clone $dasar)->count(),
-                'ibu'        => (clone $dasar)->distinct('ibu_hamil_id')->count('ibu_hamil_id'),
-                'k1'         => (clone $dasar)->where('kunjungan_ke', 1)->count(),
-                'hipertensi' => (clone $dasar)->where(fn ($q) => $q->where('tensi_sistolik', '>=', 140)->orWhere('tensi_diastolik', '>=', 90))->count(),
-                'anemia'     => (clone $dasar)->where('hb', '<', 11)->count(),
-                'dirujuk'    => (clone $dasar)->where('status_rujukan', '!=', 'tidak')->count(),
+                'kunjungan'  => $baris->count(),
+                'ibu'        => $baris->pluck('ibu_hamil_id')->unique()->count(),
+                'k1'         => $baris->where('kunjungan_ke', 1)->count(),
+                'hipertensi' => $baris->filter(fn ($k) => $k->hipertensi)->count(),
+                'anemia'     => $baris->filter(fn ($k) => $k->anemia)->count(),
+                'dirujuk'    => $baris->where('status_rujukan', '!=', 'tidak')->count(),
             ];
         }
 
         /* ── Cakupan kumulatif K1–K6 (tahun terpilih) ─ */
         $cakupan = [];
         for ($k = 1; $k <= 6; $k++) {
-            $cakupan[$k] = KunjunganAnc::whereYear('tanggal', $tahun)
-                ->where('kunjungan_ke', $k)
-                ->distinct('ibu_hamil_id')
-                ->count('ibu_hamil_id');
+            $cakupan[$k] = $kunjunganTahun->where('kunjungan_ke', $k)
+                ->pluck('ibu_hamil_id')
+                ->unique()
+                ->count();
         }
 
         /* ── Distribusi risiko ───────────────────── */
-        $semua = IbuHamil::all();
+        $semua = IbuHamil::with('kunjungan')->get();   // eager load: cegah N+1
         $distribusiRisiko = [
             'KRR'  => $semua->where('kategori_risiko', 'KRR')->count(),
             'KRT'  => $semua->where('kategori_risiko', 'KRT')->count(),
@@ -58,13 +62,10 @@ class LaporanController extends Controller
             ->values();
 
         /* ── Rekap kondisi klinis ────────────────── */
-        $kunjunganTahun = KunjunganAnc::whereYear('tanggal', $tahun)->get();
-
+        // $kunjunganTahun sudah diambil di atas (satu query untuk seluruh tahun).
         // Jumlah ibu unik sepanjang tahun — BUKAN penjumlahan angka bulanan,
         // karena satu ibu bisa berkunjung di beberapa bulan.
-        $ibuUnikTahun = KunjunganAnc::whereYear('tanggal', $tahun)
-            ->distinct('ibu_hamil_id')
-            ->count('ibu_hamil_id');
+        $ibuUnikTahun = $kunjunganTahun->pluck('ibu_hamil_id')->unique()->count();
 
         $rekapKlinis = [
             'total_kunjungan' => $kunjunganTahun->count(),
