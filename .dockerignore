@@ -1,0 +1,22 @@
+.git
+.gitignore
+node_modules
+vendor
+
+# Jangan pernah kirim kredensial ke image
+.env
+.env.*
+!.env.example
+
+# Berkas lokal / alat bantu
+_tools
+_shots
+_docs
+storage/logs/*
+storage/framework/cache/*
+storage/framework/sessions/*
+storage/framework/views/*
+bootstrap/cache/*.php
+
+*.md
+!README.md
